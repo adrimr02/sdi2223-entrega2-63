@@ -26,6 +26,10 @@ module.exports = function(app, usersRepository) {
       errors.push('Ese email ya está en uso')
     }
 
+    if (password.lenth < 6) {
+      errors.push('La contraseña debe incluir, la menos, 6 caracteres')
+    }
+
     if (password !== repeatPassword) {
       errors.push('Las contraseñas no coinciden')
     }
