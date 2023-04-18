@@ -4,7 +4,6 @@ const { MongoClient } = require('mongodb')
 const createError = require('http-errors')
 const path = require('path')
 const cookieParser = require('cookie-parser')
-const fileUpload = require('express-fileupload')
 const logger = require('morgan')
 const expressSession = require('express-session')
 
@@ -32,10 +31,6 @@ app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
-app.use(fileUpload({
-  limits: { filesize: 50 * 1024 * 1024 },
-  createParentPath: true
-}))
 app.use(expressSession({
   secret: 'abcdefg',
   resave: true,
