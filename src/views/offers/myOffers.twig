@@ -1,0 +1,48 @@
+{% extends "layout.twig" %}
+
+{% block title %} Mis Ofertas {% endblock %}
+
+{% block main_container %}
+  <h2>Mis ofertas</h2>
+  <div class="row text-right">
+		<a href="/offers/new" class="btn btn-info" role="button">Nueva Oferta</a>
+	</div>
+	<div class="table-responsive">
+		<table class="table table-hover">
+			<thead>
+			<tr>
+				<th>Título</th>
+				<th>Descripción</th>
+				<th>Fecha de publicación</th>
+				<th>Precio</th>
+        <th>Estado</th>
+				<th class="col-md-1"></th>
+			</tr>
+			</thead>
+			<tbody>
+			{% for offer in offers %}
+				<tr>
+					<td>{{ offer.title }}</td>
+					<td>{{ offer.description }}</td>
+					<td>{{ offer.date }}</td>
+					<td>{{ offer.price }} €</td>
+					<td>{{ offer.available ? 'Disponible' : 'Vendida' }}</td>
+					<td>
+						<a href="/offers/delete/{{ offer._id }}">Eliminar</a><br>
+					</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
+
+	<div class="row text-center">
+			<ul class="pagination">
+					{% for page in pages %}
+					<li class="page-item {{ page == currentPage ? 'active' : '' }}">
+							<a href="/offers/my-offers?page={{ page }}" class="page-link">{{ page }}</a>
+					</li>
+					{% endfor %}
+			</ul>
+	</div>
+{% endblock %}
