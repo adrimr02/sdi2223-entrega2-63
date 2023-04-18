@@ -9,7 +9,8 @@ const logger = require('morgan')
 const expressSession = require('express-session')
 
 // Import proyect files here
-const UsersRepository = require('./repositories/userRepository')
+const UsersRepository = require('./repositories/usersRepository')
+const OffersRepository = require('./repositories/offersRepository')
 
 const userSessionRouter = require('./routes/userSessionRouter')
 const userNoSessionRouter = require('./routes/userNoSessionRouter')
@@ -20,6 +21,7 @@ const app = express()
 const uri = "mongodb://127.0.0.1:27017"
 app.set('mongouri', uri)
 const usersRepository = new UsersRepository(app, MongoClient)
+const offersRepository = new OffersRepository(app, MongoClient)
 
 // View engine setup
 app.set('views', path.join(__dirname, 'views'))
@@ -44,12 +46,14 @@ app.use(expressSession({
 app.use('/signup', userNoSessionRouter)
 app.use('/login', userNoSessionRouter)
 app.use('/logout', userSessionRouter)
+app.use('/offers/*', userSessionRouter)
 
 // Set static files
 app.use(express.static(path.join(__dirname, '../public')))
 
 // Import Routes here
 require('./routes/users')(app, usersRepository)
+require('./routes/offers')(app, offersRepository)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

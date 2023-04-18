@@ -3,7 +3,7 @@ const { hashSync, compareSync, genSaltSync } = require('bcrypt')
 /**
  * 
  * @param {import("express").Application} app 
- * @param {import("../repositories/userRepository")} usersRepository 
+ * @param {import("../repositories/usersRepository")} usersRepository 
  */
 module.exports = function(app, usersRepository) {
 
