@@ -1,11 +1,25 @@
+// Import dependencies here
 const express = require('express')
+const { MongoClient } = require('mongodb')
 const createError = require('http-errors')
 const path = require('path')
 const cookieParser = require('cookie-parser')
 const fileUpload = require('express-fileupload')
 const logger = require('morgan')
+const expressSession = require('express-session')
+
+// Import proyect files here
+const UsersRepository = require('./repositories/userRepository')
+
+const userSessionRouter = require('./routes/userSessionRouter')
+const userNoSessionRouter = require('./routes/userNoSessionRouter')
 
 const app = express()
+
+// Initialize Repositories here
+const uri = "mongodb://127.0.0.1:27017"
+app.set('mongouri', uri)
+const usersRepository = new UsersRepository(app, MongoClient)
 
 // View engine setup
 app.set('views', path.join(__dirname, 'views'))
@@ -20,10 +34,22 @@ app.use(fileUpload({
   limits: { filesize: 50 * 1024 * 1024 },
   createParentPath: true
 }))
+app.use(expressSession({
+  secret: 'abcdefg',
+  resave: true,
+  saveUninitialized: true
+}))
+
+//Protect Routes here
+app.use('/signup', userNoSessionRouter)
+app.use('/login', userNoSessionRouter)
+app.use('/logout', userSessionRouter)
 
 // Set static files
 app.use(express.static(path.join(__dirname, '../public')))
 
+// Import Routes here
+require('./routes/users')(app, usersRepository)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -39,7 +65,7 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500)
-  res.render('error')
+  res.render('error', { user: req.session.user })
 });
 
 module.exports = app

@@ -1,0 +1,28 @@
+  {% extends "layout.twig" %}
+
+{% block title %} Iniciar Sesión {% endblock %}
+
+{% block main_container %}
+  <h2>Iniciar Sesión</h2>
+  <form class="form-horizontal" method="post" action="/login" >
+    <div class="form-group">
+      <label class="control-label col-sm-2" for="email">Email:</label>
+      <div class="col-sm-10">
+        <input id="email" type="email" class="form-control" name="email"
+            placeholder="email@email.com" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-sm-2" for="password">Contraseña:</label>
+      <div class="col-sm-10">          
+        <input  id="password" type="password"  class="form-control" name="password"
+        	placeholder="Contraseña" />
+      </div>
+    </div>
+    <div class="form-group">        
+      <div class="col-sm-offset-2 col-sm-10">
+        <button type="submit" class="btn btn-primary">Entrar</button>
+      </div>
+    </div>
+  </form>
+{% endblock %}
