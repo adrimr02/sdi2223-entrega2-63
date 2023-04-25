@@ -1,4 +1,4 @@
-### SDI Entrega 2
+# SDI Entrega 2
 ## Progreso
 * ### Aplicación Web:
   * Registrarse como usuario ✓
