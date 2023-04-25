@@ -6,6 +6,7 @@ const path = require('path')
 const cookieParser = require('cookie-parser')
 const logger = require('morgan')
 const expressSession = require('express-session')
+const bodyParser = require('body-parser');
 
 // Import proyect files here
 const UsersRepository = require('./repositories/usersRepository')
@@ -36,12 +37,15 @@ app.use(expressSession({
   resave: true,
   saveUninitialized: true
 }))
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 //Protect Routes here
 app.use('/signup', userNoSessionRouter)
 app.use('/login', userNoSessionRouter)
 app.use('/logout', userSessionRouter)
 app.use('/offers/*', userSessionRouter)
+app.use('/users', userSessionRouter)
 
 // Set static files
 app.use(express.static(path.join(__dirname, '../public')))
@@ -49,6 +53,7 @@ app.use(express.static(path.join(__dirname, '../public')))
 // Import Routes here
 require('./routes/users')(app, usersRepository)
 require('./routes/offers')(app, offersRepository)
+require('./routes/admin')(app, usersRepository)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
