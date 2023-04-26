@@ -1,11 +1,10 @@
-const {ObjectId} = require("mongodb");
 
 /**
  *
  * @param {import("express").Application} app
  * @param {import("../repositories/usersRepository")} usersRepository
  */
-module.exports = function(app, usersRepository) {
+module.exports = function(app, usersRepository, ofersReposiroty) {
     app.get('/users', (req, res) => {
         let filter = {};
         let options = {sort: { email: 1}};
@@ -40,24 +39,24 @@ module.exports = function(app, usersRepository) {
 
     app.post('/users', (req,res) => {
         const errors = []
+        if (typeof req.body.selectedUsers === 'string') {
+            req.body.selectedUsers = [req.body.selectedUsers];
+        }
         const selectedUsers = req.body.selectedUsers;
         if(selectedUsers != undefined && selectedUsers.length > 0){
-            if(!selectedUsers.include("admin@email.com")){
-                usersRepository.deleteUsers(selectedUsers).then (result => {
-                    if (result === null || result.deletedCount === 0) {
-                        errors.push('No se han podido eliminar los usuarios')
-                        res.redirect(`/users?message=${errors.join('<br>')}&messageType=alert-danger`)
-                    } else {
-                        res.redirect('/users?message=Usuarios eliminados correctamente&messageType=alert-success')
-                    }
-                }).catch(error => {
-                    errors.push('Se ha producido un error al intentar eliminar los usuarios')
+            usersRepository.deleteUsers(selectedUsers).then (result => {
+                ofersReposiroty.deleteOfferByAuthor(selectedUsers)
+                if (result === null || result.deletedCount === 0) {
+                    errors.push('No se han podido eliminar los usuarios')
                     res.redirect(`/users?message=${errors.join('<br>')}&messageType=alert-danger`)
-                });
-            }else{
-                errors.push('No puede eliminar al usuario administrador')
+                } else {
+                    res.redirect('/users?message=Usuarios eliminados correctamente&messageType=alert-success')
+                }
+            }).catch(error => {
+                errors.push('Se ha producido un error al intentar eliminar los usuarios')
                 res.redirect(`/users?message=${errors.join('<br>')}&messageType=alert-danger`)
-            }
+            });
+
         }else{
             errors.push('No hay usuarios seleccionados')
             res.redirect(`/users?message=${errors.join('<br>')}&messageType=alert-danger`)
