@@ -6,7 +6,8 @@ const path = require('path')
 const cookieParser = require('cookie-parser')
 const logger = require('morgan')
 const expressSession = require('express-session')
-const bodyParser = require('body-parser');
+const jwt = require('jsonwebtoken')
+const bodyParser = require('body-parser')
 
 // Import proyect files here
 const UsersRepository = require('./repositories/usersRepository')
@@ -16,6 +17,10 @@ const userSessionRouter = require('./routes/userSessionRouter')
 const userNoSessionRouter = require('./routes/userNoSessionRouter')
 
 const app = express()
+
+//Setting global variables
+app.set('jwt', jwt)
+app.set('clave', 'secreto')
 
 // Initialize Repositories here
 const uri = "mongodb://127.0.0.1:27017"
@@ -54,6 +59,8 @@ app.use(express.static(path.join(__dirname, '../public')))
 require('./routes/users')(app, usersRepository)
 require('./routes/offers')(app, offersRepository)
 require('./routes/admin')(app, usersRepository)
+require('./routes/api/authApi')(app, usersRepository)
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
