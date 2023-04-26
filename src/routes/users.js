@@ -26,8 +26,8 @@ module.exports = function(app, usersRepository) {
       errors.push('Ese email ya está en uso')
     }
 
-    if (password.lenth < 6) {
-      errors.push('La contraseña debe incluir, la menos, 6 caracteres')
+    if (password.length < 6) {
+      errors.push('La contraseña debe incluir, al menos, 6 caracteres')
     }
 
     if (password !== repeatPassword) {
@@ -77,7 +77,11 @@ module.exports = function(app, usersRepository) {
 
     if (errors.length === 0) {
       req.session.user = user.email
-      res.redirect('/offers/my-offers?message=Sesión iniciada&messageType=alert-success')
+      if(req.session.user === "admin@email.com"){
+        res.redirect('/users?message=Sesión iniciada&messageType=alert-success')
+      }else{
+        res.redirect('/offers/my-offers?message=Sesión iniciada&messageType=alert-success')
+      }
     } else {
       req.session.user = null
       res.redirect(`/signup?message=${errors.join('<br>')}&messageType=alert-danger`)
