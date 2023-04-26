@@ -42,17 +42,22 @@ module.exports = function(app, usersRepository) {
         const errors = []
         const selectedUsers = req.body.selectedUsers;
         if(selectedUsers != undefined && selectedUsers.length > 0){
-            usersRepository.deleteUsers(selectedUsers).then (result => {
-                if (result === null || result.deletedCount === 0) {
-                    //res.send("No se han podido eliminar los usuarios");
-                    errors.push('No se han podido eliminar los usuarios')
-                } else {
-                    res.redirect("/users");
-                }
-            }).catch(error => {
-                //res.send("Se ha producido un error al intentar eliminar los usuarios");
-                errors.push('Se ha producido un error al intentar eliminar los usuarios')
-            });
+            if(!selectedUsers.include("admin@email.com")){
+                usersRepository.deleteUsers(selectedUsers).then (result => {
+                    if (result === null || result.deletedCount === 0) {
+                        errors.push('No se han podido eliminar los usuarios')
+                        res.redirect(`/users?message=${errors.join('<br>')}&messageType=alert-danger`)
+                    } else {
+                        res.redirect('/users?message=Usuarios eliminados correctamente&messageType=alert-success')
+                    }
+                }).catch(error => {
+                    errors.push('Se ha producido un error al intentar eliminar los usuarios')
+                    res.redirect(`/users?message=${errors.join('<br>')}&messageType=alert-danger`)
+                });
+            }else{
+                errors.push('No puede eliminar al usuario administrador')
+                res.redirect(`/users?message=${errors.join('<br>')}&messageType=alert-danger`)
+            }
         }else{
             errors.push('No hay usuarios seleccionados')
             res.redirect(`/users?message=${errors.join('<br>')}&messageType=alert-danger`)
