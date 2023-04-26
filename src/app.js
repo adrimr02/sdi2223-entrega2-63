@@ -58,7 +58,7 @@ app.use(express.static(path.join(__dirname, '../public')))
 // Import Routes here
 require('./routes/users')(app, usersRepository)
 require('./routes/offers')(app, offersRepository)
-require('./routes/admin')(app, usersRepository)
+require('./routes/admin')(app, usersRepository, offersRepository)
 require('./routes/api/authApi')(app, usersRepository)
 
 

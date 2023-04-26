@@ -57,7 +57,7 @@ module.exports = class {
       const client = await this.mongoClient.connect(this.app.get('mongouri'))
       const database = client.db('mywallapop')
       const usersCollection = database.collection(this.collectionName)
-      const result = await usersCollection.deleteMany({email: {$in: selectedUsers}})
+      const  result = await usersCollection.deleteMany({email: {$in: selectedUsers}})
       return result.deletedCount
     } catch (err) {
       throw err
