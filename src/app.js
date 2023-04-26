@@ -8,10 +8,12 @@ const logger = require('morgan')
 const expressSession = require('express-session')
 const jwt = require('jsonwebtoken')
 const bodyParser = require('body-parser')
+const {createLogger, format, transports} = require("winston");
 
 // Import proyect files here
 const UsersRepository = require('./repositories/usersRepository')
 const OffersRepository = require('./repositories/offersRepository')
+const LogsRepository = require('./repositories/logsRepository')
 
 const userSessionRouter = require('./routes/userSessionRouter')
 const userNoSessionRouter = require('./routes/userNoSessionRouter')
@@ -27,6 +29,21 @@ const uri = "mongodb://127.0.0.1:27017"
 app.set('mongouri', uri)
 const usersRepository = new UsersRepository(app, MongoClient)
 const offersRepository = new OffersRepository(app, MongoClient)
+const logsRepository = new LogsRepository(app, MongoClient)
+
+// Initialize logger
+let loggerW = require('winston-mongodb');
+loggerW = createLogger({
+  transports: [
+    new transports.MongoDB({
+      db: 'mongodb://127.0.0.1:27017/mywallapop',
+      level: 'info',
+      collection: 'logs',
+      format: format.combine(format.timestamp(), format.json()),
+      options: { useUnifiedTopology: true }
+    })
+  ]
+});
 
 // View engine setup
 app.set('views', path.join(__dirname, 'views'))
@@ -44,6 +61,7 @@ app.use(expressSession({
 }))
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(logMiddleware);
 
 //Protect Routes here
 app.use('/signup', userNoSessionRouter)
@@ -58,7 +76,7 @@ app.use(express.static(path.join(__dirname, '../public')))
 // Import Routes here
 require('./routes/users')(app, usersRepository)
 require('./routes/offers')(app, offersRepository)
-require('./routes/admin')(app, usersRepository, offersRepository)
+require('./routes/admin')(app, usersRepository, offersRepository, logsRepository)
 require('./routes/api/authApi')(app, usersRepository)
 
 
@@ -78,5 +96,15 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500)
   res.render('error', { user: req.session.user })
 });
+
+function logMiddleware(req, res, next) {
+  loggerW.info({
+    type: "PET",
+    method: req.method,
+    url: req.originalUrl,
+    params: req.params
+  });
+  next();
+}
 
 module.exports = app

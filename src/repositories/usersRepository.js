@@ -1,4 +1,3 @@
-const {ObjectId} = require("mongodb");
 module.exports = class {
   mongoClient
   app

@@ -48,6 +48,12 @@ module.exports = function(app, usersRepository) {
       }
       await usersRepository.insertUser(newUser)
       req.session.user = newUser.email
+      /*loggerW.info({
+        type: "ALTA",
+        method: req.method,
+        url: req.originalUrl,
+        params: req.params
+      });*/
       res.redirect('/offers/my-offers?message=Cuenta creada con exito&messageType=alert-success')
     } else {
       req.session.user = null
@@ -77,6 +83,10 @@ module.exports = function(app, usersRepository) {
 
     if (errors.length === 0) {
       req.session.user = user.email
+      /*loggerW.info({
+        type: "LOGIN-EX",
+        user: user.email
+      });*/
       if(req.session.user === "admin@email.com"){
         res.redirect('/users?message=Sesión iniciada&messageType=alert-success')
       }else{
@@ -84,12 +94,20 @@ module.exports = function(app, usersRepository) {
       }
     } else {
       req.session.user = null
+      /*loggerW.info({
+        type: "LOGIN-ERR",
+        user: user.email
+      });*/
       res.redirect(`/signup?message=${errors.join('<br>')}&messageType=alert-danger`)
     }
 
   })
 
   app.get('/logout', (req, res) => {
+    /*loggerW.info({
+      type: "LOGOUT",
+      user: req.session.user
+    });*/
     req.session.user = null
     res.redirect('/login')
   })
