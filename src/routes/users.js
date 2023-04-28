@@ -83,6 +83,7 @@ module.exports = function(app, usersRepository) {
 
     if (errors.length === 0) {
       req.session.user = user.email
+      req.session.isAdmin = user.userType === 'admin'
       /*loggerW.info({
         type: "LOGIN-EX",
         user: user.email

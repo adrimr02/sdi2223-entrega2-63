@@ -9,6 +9,7 @@ const expressSession = require('express-session')
 const jwt = require('jsonwebtoken')
 const bodyParser = require('body-parser')
 const {createLogger, format, transports} = require("winston");
+let loggerW = require('winston-mongodb');
 
 // Import proyect files here
 const UsersRepository = require('./repositories/usersRepository')
@@ -16,6 +17,7 @@ const OffersRepository = require('./repositories/offersRepository')
 const LogsRepository = require('./repositories/logsRepository')
 
 const userSessionRouter = require('./routes/userSessionRouter')
+const adminSessionRouter = require('./routes/adminSessionRouter')
 const userNoSessionRouter = require('./routes/userNoSessionRouter')
 
 const app = express()
@@ -31,8 +33,9 @@ const usersRepository = new UsersRepository(app, MongoClient)
 const offersRepository = new OffersRepository(app, MongoClient)
 const logsRepository = new LogsRepository(app, MongoClient)
 
+require('./util/dbInit')(app, MongoClient, usersRepository, offersRepository, logsRepository)
+
 // Initialize logger
-let loggerW = require('winston-mongodb');
 loggerW = createLogger({
   transports: [
     new transports.MongoDB({
@@ -69,7 +72,7 @@ app.use('/login', userNoSessionRouter)
 app.use('/logout', userSessionRouter)
 app.use('/offers/*', userSessionRouter)
 app.use('/shop', userSessionRouter)
-app.use('/users', userSessionRouter)
+app.use('/users', adminSessionRouter)
 
 // Set static files
 app.use(express.static(path.join(__dirname, '../public')))

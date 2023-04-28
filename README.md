@@ -3,6 +3,7 @@
 * ### Aplicación Web:
   * Registrarse como usuario ✓
     * Pruebas x
+    * Falta cumpleaños
   * Iniciar sesión ✓
     * Pruebas
   * Cerrar sesión ✓
@@ -17,18 +18,18 @@
     * Pruebas
   * Dar de baja una oferta ✓
     * Pruebas
-  * Buscar ofertas x
+  * Buscar ofertas ✓
     * Pruebas x
-  * Comprar oferta x
+  * Comprar oferta ✓
     * Pruebas x
-  * Listar ofertas compradas x
+  * Listar ofertas compradas ✓
     * Pruebas x
   * Marcar oferta como destacada x
     * Pruebas x
   * Seguridad y auditoria x
     * Pruebas x
 * ### RestApi:
-  * Identificarse como usuario x
+  * Identificarse como usuario ✓
     * Pruebas x
   * Listar ofertas disponibles x
     * Pruebas x
@@ -43,7 +44,7 @@
   * Marcar mensaje como leido x
     * Pruebas x
 * ### App JQuery:
-  * Autenticación del usuario x
+  * Autenticación del usuario ✓
     * Pruebas x
   * Listar ofertas disponibles x
     * Pruebas x
