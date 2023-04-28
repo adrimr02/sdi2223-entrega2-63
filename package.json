@@ -15,14 +15,18 @@
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.0",
+    "body-parser": "^1.20.2",
     "cookie-parser": "^1.4.6",
     "debug": "^4.3.4",
     "express": "^4.18.2",
     "express-session": "^1.17.3",
     "http-errors": "^2.0.0",
+    "jsonwebtoken": "^9.0.0",
     "mongodb": "^5.1.0",
     "morgan": "^1.10.0",
-    "twig": "^1.16.0"
+    "twig": "^1.16.0",
+    "winston": "^3.8.2",
+    "winston-mongodb": "^5.1.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.22"

@@ -73,4 +73,15 @@ module.exports = class {
     }
   }
 
+  async deleteOfferByAuthor(selectedUsers) {
+    try {
+      const client = await this.mongoClient.connect(this.app.get('mongouri'))
+      const database = client.db('mywallapop')
+      const offersCollection = database.collection(this.collectionName)
+      return await offersCollection.deleteMany({ author: {$in: selectedUsers} })
+    } catch (err) {
+      throw err
+    }
+  }
+
 }

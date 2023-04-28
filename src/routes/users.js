@@ -26,8 +26,8 @@ module.exports = function(app, usersRepository) {
       errors.push('Ese email ya está en uso')
     }
 
-    if (password.lenth < 6) {
-      errors.push('La contraseña debe incluir, la menos, 6 caracteres')
+    if (password.length < 6) {
+      errors.push('La contraseña debe incluir, al menos, 6 caracteres')
     }
 
     if (password !== repeatPassword) {
@@ -48,6 +48,12 @@ module.exports = function(app, usersRepository) {
       }
       await usersRepository.insertUser(newUser)
       req.session.user = newUser.email
+      /*loggerW.info({
+        type: "ALTA",
+        method: req.method,
+        url: req.originalUrl,
+        params: req.params
+      });*/
       res.redirect('/offers/my-offers?message=Cuenta creada con exito&messageType=alert-success')
     } else {
       req.session.user = null
@@ -77,15 +83,31 @@ module.exports = function(app, usersRepository) {
 
     if (errors.length === 0) {
       req.session.user = user.email
-      res.redirect('/offers/my-offers?message=Sesión iniciada&messageType=alert-success')
+      /*loggerW.info({
+        type: "LOGIN-EX",
+        user: user.email
+      });*/
+      if(req.session.user === "admin@email.com"){
+        res.redirect('/users?message=Sesión iniciada&messageType=alert-success')
+      }else{
+        res.redirect('/offers/my-offers?message=Sesión iniciada&messageType=alert-success')
+      }
     } else {
       req.session.user = null
+      /*loggerW.info({
+        type: "LOGIN-ERR",
+        user: user.email
+      });*/
       res.redirect(`/signup?message=${errors.join('<br>')}&messageType=alert-danger`)
     }
 
   })
 
   app.get('/logout', (req, res) => {
+    /*loggerW.info({
+      type: "LOGOUT",
+      user: req.session.user
+    });*/
     req.session.user = null
     res.redirect('/login')
   })
