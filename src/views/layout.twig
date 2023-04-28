@@ -22,7 +22,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>                        
       </button>
-      <a class="navbar-brand" href="/">
+      <a class="navbar-brand active" href="/">
         <img class="nav-img" src="/images/logo.png" alt="logo"/>
         MyWallapop
       </a>
@@ -30,9 +30,9 @@
     <div class="collapse navbar-collapse" id="myNavbar">
       {%  if user %}
       <ul class="nav navbar-nav">
-        <li id="myshop" class="active"><a href="/">Buscar</a></li>
-        <li id="mypublication"><a href="/offers/my-offers">Mis ofertas</a></li>
-        <li id="mybuy"><a href="/offers/bought">Ofertas Compradas</a></li>
+        <li id="shop"><a href="/shop">Buscar</a></li>
+        <li id="myoffers"><a href="/offers/my-offers">Mis ofertas</a></li>
+        <li id="mybought"><a href="/offers/bought">Ofertas Compradas</a></li>
       </ul>
       {% endif %}
       <ul class="nav navbar-nav navbar-right">

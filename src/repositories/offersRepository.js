@@ -51,6 +51,17 @@ module.exports = class {
     }
   }
 
+  async updateOffer(id, offer) {
+    try {
+      const client = await this.mongoClient.connect(this.app.get('mongouri'))
+      const database = client.db('mywallapop')
+      const offersCollection = database.collection(this.collectionName)
+      return await offersCollection.findOneAndUpdate({ _id: id }, offer)
+    } catch (err) {
+      throw err
+    }
+  }
+
   async deleteOffer(id) {
     try {
       const client = await this.mongoClient.connect(this.app.get('mongouri'))

@@ -1,0 +1,67 @@
+{% extends "layout.twig" %}
+
+{% block title %} Comprar {% endblock %}
+
+{% block main_container %}
+  <h2>Ofertas disponibles</h2>
+  <div class="row">
+    <div id="custom-search-input ">
+      <form method="get" action="/shop">
+        <div class="input-group col-xs-8 col-sm-6 col-md-4 col-lg-5 pull-right">
+          <input id="search" type="text" class="search-query form-control"
+            placeholder="Busca ofertas" name="search"/>
+          <span class="input-group-btn">
+            <button class="btn" type="submit">
+              <span class="glyphicon glyphicon-search"></span>
+            </button>
+          </span>
+        </div>
+      </form>
+    </div>
+  </div>
+	<div class="table-responsive">
+		<table class="table table-hover">
+			<thead>
+			<tr>
+				<th>Título</th>
+				<th>Descripción</th>
+				<th>Fecha de publicación</th>
+				<th>Precio</th>
+        <th></th>
+				<th class="col-md-1"></th>
+			</tr>
+			</thead>
+			<tbody>
+			{% for offer in offers %}
+				<tr>
+					<td>{{ offer.title }}</td>
+					<td>{{ offer.description }}</td>
+					<td>{{ offer.date }}</td>
+					<td>{{ offer.price }} €</td>
+					<td>
+          {% if offer.available %}
+						<a href="/offers/buy/{{ offer._id }}">Comprar</a><br>
+          {% else %}
+            Vendido
+          {% endif %}
+					</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
+
+	<div class="row text-center">
+			<ul class="pagination">
+					{% for page in pages %}
+					<li class="page-item {{ page == currentPage ? 'active' : '' }}">
+						{% if search is defined %}
+							<a href="/shop?page={{page}}&search={{search}}" class="page-link">{{ page }}</a>
+						{% else %}
+							<a href="/shop?page={{page}}" class="page-link">{{ page }}</a>
+						{% endif %}
+					</li>
+					{% endfor %}
+			</ul>
+	</div>
+{% endblock %}

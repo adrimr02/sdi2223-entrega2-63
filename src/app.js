@@ -42,13 +42,14 @@ app.use('/signup', userNoSessionRouter)
 app.use('/login', userNoSessionRouter)
 app.use('/logout', userSessionRouter)
 app.use('/offers/*', userSessionRouter)
+app.use('/shop', userSessionRouter)
 
 // Set static files
 app.use(express.static(path.join(__dirname, '../public')))
 
 // Import Routes here
 require('./routes/users')(app, usersRepository)
-require('./routes/offers')(app, offersRepository)
+require('./routes/offers')(app, offersRepository, usersRepository)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
