@@ -35,13 +35,12 @@ module.exports = class {
     }
   }
 
-  async getUsersPg(filter, options, page){
+  async getUsersPg(filter, options, page, limit=5){
     try {
-      const limit = 5;
       const client = await this.mongoClient.connect(this.app.get('mongouri'))
       const database = client.db("mywallapop")
       const usersCollection = database.collection(this.collectionName)
-      const usersCollectionCount = await usersCollection.count()
+      const usersCollectionCount = await usersCollection.countDocuments()
       const cursor = usersCollection.find(filter, options).skip((page - 1) * limit).limit(limit)
       const users = await cursor.toArray()
       const result = {users: users, total: usersCollectionCount}
@@ -51,12 +50,12 @@ module.exports = class {
     }
   }
   
-  async updateUser(filter, user) {
+  async updateUser(_id, user) {
     try {
       const client = await this.mongoClient.connect(this.app.get('mongouri'))
       const database = client.db('mywallapop')
       const usersCollection = database.collection(this.collectionName)
-      return await usersCollection.findOneAndUpdate(filter, user)
+      return await usersCollection.findOneAndUpdate({ _id }, user)
     } catch (err) {
       throw err
     }

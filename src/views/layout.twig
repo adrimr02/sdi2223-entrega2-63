@@ -44,6 +44,9 @@
       {% endif %}
       <ul class="nav navbar-nav navbar-right">
       {% if user %}
+        {% if not admin %}
+        <li><p class="navbar-text">Disponible: {{ wallet }} €<p></li>
+        {% endif %}
         <li><p class="navbar-text">{{ user }}<p></li>
         <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Cerrar sesión</a></li>
       {% else %}

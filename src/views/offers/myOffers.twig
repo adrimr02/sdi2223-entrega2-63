@@ -29,14 +29,14 @@
 					<td>{{ offer.price }} €</td>
 					<td>{{ offer.available ? 'Disponible' : 'Vendida' }}</td>
 					<td>
-						<a href="/offers/delete/{{ offer._id }}">Eliminar</a><br>
+						{% if offer.featured %}
+						Oferta destacada
+						{% else %}
+						<a href="/offers/feature/{{ offer._id }}">Destacar</a><br>
+						{% endif %}
 					</td>
 					<td>
-						{% if offer.featured %}
-						<a href="/offers/feature/{{ offer._id }}">Destacar</a><br>
-						{% else %}
-						Oferta destacada
-						{% endif %}
+						<a href="/offers/delete/{{ offer._id }}">Eliminar</a><br>
 					</td>
 				</tr>
 			{% endfor %}

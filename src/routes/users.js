@@ -48,6 +48,7 @@ module.exports = function(app, usersRepository) {
       }
       await usersRepository.insertUser(newUser)
       req.session.user = newUser.email
+      req.session.wallet = newUser.wallet
       /*loggerW.info({
         type: "ALTA",
         method: req.method,
@@ -83,6 +84,7 @@ module.exports = function(app, usersRepository) {
 
     if (errors.length === 0) {
       req.session.user = user.email
+      req.session.wallet = user.wallet
       req.session.isAdmin = user.userType === 'admin'
       /*loggerW.info({
         type: "LOGIN-EX",

@@ -2,8 +2,9 @@ const userSessionRouter = require('express').Router()
 
 userSessionRouter.use(function (req, res, next) {
   if (req.session.user)
-    if (!req.session.isAdmin)
+    if (!req.session.isAdmin) {
       next()
+    }
     else
       res.redirect('/users')
   else

@@ -33,7 +33,8 @@ const usersRepository = new UsersRepository(app, MongoClient)
 const offersRepository = new OffersRepository(app, MongoClient)
 const logsRepository = new LogsRepository(app, MongoClient)
 
-require('./util/dbInit')(app, MongoClient, usersRepository, offersRepository, logsRepository)
+// Limpiar e inicializar la BBDD
+// require('./util/dbInit')(app, MongoClient, usersRepository, offersRepository, logsRepository)
 
 // Initialize logger
 loggerW = createLogger({
@@ -82,6 +83,9 @@ require('./routes/users')(app, usersRepository)
 require('./routes/offers')(app, offersRepository, usersRepository)
 require('./routes/admin')(app, usersRepository, offersRepository, logsRepository)
 require('./routes/api/authApi')(app, usersRepository)
+app.get('/', userNoSessionRouter, (req, res) => {
+  res.render('index')
+})
 
 
 // catch 404 and forward to error handler
