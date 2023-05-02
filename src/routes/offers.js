@@ -52,7 +52,7 @@ module.exports = function(app, offerRepo, userRepo) {
       date: new Date(),
       seller: req.session.user,
       available: true,
-      featured: req.body.featured || false
+      featured: (!!req.body.featured) || false
     }
 
     const errors = []

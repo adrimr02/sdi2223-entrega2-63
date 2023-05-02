@@ -3,7 +3,7 @@
 {% block title %} Comprar {% endblock %}
 
 {% block main_container %}
-	{% if featured is defined and featured.legth > 0 %}
+	{% if featured is defined and not featured is empty %}
 	<h2>Ofertas destacadas</h2>
 	<div class="table-responsive">
 		<table class="table table-hover">
