@@ -51,12 +51,12 @@ module.exports = class {
     }
   }
   
-  async updateUser(id, user) {
+  async updateUser(filter, user) {
     try {
       const client = await this.mongoClient.connect(this.app.get('mongouri'))
       const database = client.db('mywallapop')
       const usersCollection = database.collection(this.collectionName)
-      return await usersCollection.findOneAndUpdate({ _id: id }, user)
+      return await usersCollection.findOneAndUpdate(filter, user)
     } catch (err) {
       throw err
     }

@@ -37,6 +37,17 @@ module.exports = class {
     }
   }
 
+  async getOffers(filter, options) {
+    try {
+      const client = await this.mongoClient.connect(this.app.get('mongouri'))
+      const database = client.db('mywallapop')
+      const offersCollection = database.collection(this.collectionName)
+      return await offersCollection.find(filter, options).toArray()
+    } catch(error) {
+      throw error
+    }
+  }
+
   async getOffersPage(filter , options, page, limit=8) {
     try {
       const client = await this.mongoClient.connect(this.app.get('mongouri'))

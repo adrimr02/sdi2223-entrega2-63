@@ -17,6 +17,7 @@
 				<th>Precio</th>
         <th>Estado</th>
 				<th class="col-md-1"></th>
+				<th class="col-md-1"></th>
 			</tr>
 			</thead>
 			<tbody>
@@ -29,6 +30,13 @@
 					<td>{{ offer.available ? 'Disponible' : 'Vendida' }}</td>
 					<td>
 						<a href="/offers/delete/{{ offer._id }}">Eliminar</a><br>
+					</td>
+					<td>
+						{% if offer.featured %}
+						<a href="/offers/feature/{{ offer._id }}">Destacar</a><br>
+						{% else %}
+						Oferta destacada
+						{% endif %}
 					</td>
 				</tr>
 			{% endfor %}

@@ -18,11 +18,12 @@ module.exports = function(app, offerRepo, userRepo) {
     }
     const page = req.query.page || 1
     const { offers, total: totalOfferCount } = await offerRepo.getOffersPage(filter, options, page, 5)
-
+    const featured = await offerRepo.getOffers({ featured: true }, {})
     const pages = getPages(totalOfferCount, page, 5)
     res.render("shop.twig", {
       user: req.session.user,
       offers: offers.map(o => ({ ...o, date: formatDate(o.date) })),
+      featured: featured.map(o => ({ ...o, date: formatDate(o.date) })),
       pages,
       currentPage: page+'',
       search: req.query.search
@@ -46,7 +47,8 @@ module.exports = function(app, offerRepo, userRepo) {
       price: parseFloat(req.body.price),
       date: new Date(),
       seller: req.session.user,
-      available: true
+      available: true,
+      featured: req.body.featured || false
     }
 
     const errors = []
@@ -64,6 +66,8 @@ module.exports = function(app, offerRepo, userRepo) {
     }
 
     if (errors.length === 0) {
+      if (offer.featured)
+        await userRepo.updateUser({ email: req.session.user }, { $set: {wallet: user.wallet - 20 } })
       await offerRepo.insertOffer(offer)
       res.redirect('/offers/my-offers?message=Oferta creada.&messageType=alert-success')
     } else {
@@ -155,7 +159,7 @@ module.exports = function(app, offerRepo, userRepo) {
           return
         }
       }
-      await userRepo.updateUser(user._id, { $set: {wallet: user.wallet - offer.price } })
+      await userRepo.updateUser({ _id: user._id }, { $set: {wallet: user.wallet - offer.price } })
       await offerRepo.updateOffer(new ObjectId(req.params.id), { $set: { available: false, buyer: req.session.user }})
       res.redirect('/offers/bought?message=Oferta comprada.&messageType=alert-success')
     } catch(err) {
