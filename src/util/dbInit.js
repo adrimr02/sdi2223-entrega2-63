@@ -10,6 +10,7 @@ const { hashSync } = require("bcrypt")
 module.exports = async function(app, mongoClient, usersRepo, offersRepo, logsRepo) {
   await dropDatabase(app, mongoClient)
   addUsers(usersRepo)
+  addOffers(offersRepo)
 }
 
 /**
@@ -56,6 +57,25 @@ function addUsers(usersRepo) {
  * 
  * @param {import("../repositories/offersRepository")} offersRepo 
  */
-async function addOffers(offersRepo) {
+async function addOffers(offersRepo)
+{
+  offersRepo.insertOffer( {
+    title: "Silla",
+    description: "Silla fabricada con madera de castaño",
+    price: 150,
+    date: new Date(),
+    seller: "usuario02@email.com",
+    available: true,
+    featured: true
+  })
 
+  offersRepo.insertOffer( {
+    title: "Mesa",
+    description: "Mesa redonda fabricada con madera de roble",
+    price: 350,
+    date: new Date(),
+    seller: "usuario01@email.com",
+    available: false,
+    featured: false
+  })
 }

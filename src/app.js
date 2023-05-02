@@ -15,6 +15,8 @@ let loggerW = require('winston-mongodb');
 const UsersRepository = require('./repositories/usersRepository')
 const OffersRepository = require('./repositories/offersRepository')
 const LogsRepository = require('./repositories/logsRepository')
+const ConversationsRepository = require('./repositories/conversationsRepository')
+const MessageRepository = require('./repositories/messageRepository')
 
 const userSessionRouter = require('./routes/userSessionRouter')
 const adminSessionRouter = require('./routes/adminSessionRouter')
