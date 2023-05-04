@@ -20,6 +20,8 @@
   </div>
 </div>
 <script>
+  var userEmail
+
   $("#boton-login").click(function() {
     $.ajax({
       url: URLbase + '/users/login',
@@ -31,6 +33,7 @@
       dataType: 'json',
       success: function(response) {
         token = response.token
+        userEmail = response.email
         Cookies.set('token', response.token);
         $('#main-container').load('widget-offers.html')
       },

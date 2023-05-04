@@ -86,6 +86,31 @@ async function addConversations(conversationsRepo)
   conversationsRepo.insertConversation( {
     buyer: "user02@email.com",
     offer: "Mesa",
+    seller:"user01@email.com",
+    message: [1,2,3],
+    date: new Date()
+  })
+
+  conversationsRepo.insertConversation( {
+    buyer: "user03@email.com",
+    offer: "Silla",
+    seller:"user01@email.com",
+    message: [1,2],
+    date: new Date()
+  })
+
+  conversationsRepo.insertConversation( {
+    buyer: "user03@email.com",
+    offer: "Sofa",
+    seller:"user02@email.com",
+    message: [1,2,3],
+    date: new Date()
+  })
+
+  conversationsRepo.insertConversation( {
+    buyer: "user01@email.com",
+    offer: "Sofa",
+    seller:"user02@email.com",
     message: [1,2,3],
     date: new Date()
   })

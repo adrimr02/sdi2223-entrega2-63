@@ -28,7 +28,7 @@ module.exports = class {
             const client = await this.mongoClient.connect(this.app.get('mongouri'))
             const database = client.db('mywallapop')
             const conversationsCollection = database.collection(this.collectionName)
-            return await conversationsCollection.findOne(filter, options)
+            return await conversationsCollection.find(filter, options).toArray();
         } catch(error) {
             throw error
         }

@@ -23,17 +23,6 @@ module.exports = class {
         }
     }
 
-    async findMessage(filter, options) {
-        try {
-            const client = await this.mongoClient.connect(this.app.get('mongouri'))
-            const database = client.db('mywallapop')
-            const messagesCollection = database.collection(this.collectionName)
-            return await messagesCollection.findOne(filter, options)
-        } catch(error) {
-            throw error
-        }
-    }
-
     async getMessages(filter, options) {
         try {
             const client = await this.mongoClient.connect(this.app.get('mongouri'))

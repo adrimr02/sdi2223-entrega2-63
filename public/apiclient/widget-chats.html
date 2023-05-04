@@ -1,4 +1,5 @@
 <div id="widget-conversations" >
+    <h1>Mis Conversaciones</h1>
     <button class="btn" onclick="loadConversations()" >Actualizar</button>
     <table class="table table-hover">
         <thead>
@@ -19,13 +20,16 @@
     function loadConversations(){
         $.ajax({
             url:URLbase+"/conversations",
-            type:"GET",
-            data:{},
+            type:"POST",
+            data:{user: 'hola'},
             dataType:'json',
-            headers:{"token":token},
             success: function(response){
-                conversations = response.conversations;
-                updateConversations(conversations);
+                if (Cookies.get('token') != null ) {
+                    conversations = response.conversations;
+                    updateConversations(conversations);
+                }else{
+                    $( "#main-container" ).load("widget-login.html");
+                }
             },
             error: function (error) {
                 $("#main-container").load("widget-chats.html");
@@ -35,7 +39,7 @@
 
     function updateConversations(conversations) {
         $("#conversationsTableBody").empty(); // Vaciar la tabla
-        for (i = 0; i < conversations.length; i++) {
+        for (i = 0; i <conversations.length; i++) {
             $("#conversationsTableBody").append(
                 "<tr id=" + conversations[i]._id + ">" +
                 "<td>" + conversations[i].buyer + "</td>" +

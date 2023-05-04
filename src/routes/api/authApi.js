@@ -26,7 +26,7 @@ module.exports = function (app, usersRepo) {
       }
 
       const token = app.get('jwt').sign({ user: user.email, time: Date.now()/1000 }, app.get('clave'))
-      res.status(200).json({ success: true, data: { token, message: 'Usuario autorizado', autheticated: true } })
+      res.status(200).json({ success: true, data: { token, message: 'Usuario autorizado', autheticated: true, email } })
     } catch(err) {
       res.status(500).json({ success: false, error: { message: 'Ha ocurrido un error al iniciar sesión' } })
     }

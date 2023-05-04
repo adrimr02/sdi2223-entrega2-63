@@ -85,6 +85,7 @@ require('./routes/users')(app, usersRepository)
 require('./routes/offers')(app, offersRepository, usersRepository)
 require('./routes/admin')(app, usersRepository, offersRepository, logsRepository)
 require('./routes/api/authApi')(app, usersRepository)
+require('./routes/api/conversationsApi')(app, conversationRepository)
 app.get('/', userNoSessionRouter, (req, res) => {
   res.render('index')
 })
