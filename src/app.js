@@ -21,6 +21,7 @@ const MessageRepository = require('./repositories/messageRepository')
 const userSessionRouter = require('./routes/userSessionRouter')
 const adminSessionRouter = require('./routes/adminSessionRouter')
 const userNoSessionRouter = require('./routes/userNoSessionRouter')
+const userTokenRouter = require('./routes/api/userTokenRouter')
 
 const app = express()
 
@@ -35,8 +36,9 @@ const usersRepository = new UsersRepository(app, MongoClient)
 const offersRepository = new OffersRepository(app, MongoClient)
 const logsRepository = new LogsRepository(app, MongoClient)
 const conversationRepository = new ConversationsRepository(app, MongoClient)
+const messageRepository = new MessageRepository(app,MongoClient)
 
-require('./util/dbInit')(app, MongoClient, usersRepository, offersRepository, logsRepository, conversationRepository)
+require('./util/dbInit')(app, MongoClient, usersRepository, offersRepository, logsRepository, conversationRepository,messageRepository)
 
 // Initialize logger
 loggerW = createLogger({
@@ -76,6 +78,7 @@ app.use('/logout', userSessionRouter)
 app.use('/offers/*', userSessionRouter)
 app.use('/shop', userSessionRouter)
 app.use('/users', adminSessionRouter)
+app.use('/api/conversations',userTokenRouter)
 
 // Set static files
 app.use(express.static(path.join(__dirname, '../public')))
@@ -85,7 +88,8 @@ require('./routes/users')(app, usersRepository)
 require('./routes/offers')(app, offersRepository, usersRepository)
 require('./routes/admin')(app, usersRepository, offersRepository, logsRepository)
 require('./routes/api/authApi')(app, usersRepository)
-require('./routes/api/conversationsApi')(app, conversationRepository)
+require('./routes/api/conversationsApi')(app, conversationRepository, messageRepository)
+
 app.get('/', userNoSessionRouter, (req, res) => {
   res.render('index')
 })

@@ -7,11 +7,11 @@ const { hashSync } = require("bcrypt")
  * @param {import("../repositories/offersRepository")} offersRepo 
  * @param {import("../repositories/logsRepository")} logsRepo 
  */
-module.exports = async function(app, mongoClient, usersRepo, offersRepo, logsRepo,conversationRepo) {
+module.exports = async function(app, mongoClient, usersRepo, offersRepo, logsRepo,conversationRepo, messageRepo) {
   await dropDatabase(app, mongoClient)
   addUsers(usersRepo)
   addOffers(offersRepo)
-  addConversations(conversationRepo)
+  addConversations(conversationRepo, messageRepo)
 }
 
 /**
@@ -81,13 +81,12 @@ async function addOffers(offersRepo)
   })
 }
 
-async function addConversations(conversationsRepo)
+async function addConversations(conversationsRepo, messageRepo)
 {
   conversationsRepo.insertConversation( {
     buyer: "user02@email.com",
     offer: "Mesa",
     seller:"user01@email.com",
-    message: [1,2,3],
     date: new Date()
   })
 
@@ -95,7 +94,6 @@ async function addConversations(conversationsRepo)
     buyer: "user03@email.com",
     offer: "Silla",
     seller:"user01@email.com",
-    message: [1,2],
     date: new Date()
   })
 
@@ -103,7 +101,6 @@ async function addConversations(conversationsRepo)
     buyer: "user03@email.com",
     offer: "Sofa",
     seller:"user02@email.com",
-    message: [1,2,3],
     date: new Date()
   })
 
@@ -111,8 +108,38 @@ async function addConversations(conversationsRepo)
     buyer: "user01@email.com",
     offer: "Sofa",
     seller:"user02@email.com",
-    message: [1,2,3],
     date: new Date()
+  })
+
+  messageRepo.insertMessage({
+    buyer: "user01@email.com",
+    offer: "Sofa",
+    seller:"user02@email.com",
+    writer:"user01@email.com",
+    content:"Hola que tal?",
+    date: new Date(),
+    read: true
+
+  })
+
+  messageRepo.insertMessage({
+    buyer: "user01@email.com",
+    offer: "Sofa",
+    seller:"user02@email.com",
+    writer:"user02@email.com",
+    content:"Muy bien, y tu?",
+    date: new Date(),
+    read: true
+  })
+
+  messageRepo.insertMessage({
+    buyer: "user03@email.com",
+    offer: "Silla",
+    seller:"user01@email.com",
+    writer:"user03@email.com",
+    content:"Buenas, estaba intersado en esta silla",
+    date: new Date(),
+    read: true
   })
 
 }

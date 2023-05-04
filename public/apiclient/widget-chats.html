@@ -21,8 +21,9 @@
         $.ajax({
             url:URLbase+"/conversations",
             type:"POST",
-            data:{user: 'hola'},
+            data:{},
             dataType:'json',
+            headers: {"token": token},
             success: function(response){
                 if (Cookies.get('token') != null ) {
                     conversations = response.conversations;
@@ -52,9 +53,9 @@
         }
     }
 
-    function conversationsDetails(_id){
-        selectedConversationsId=_id;
-        ("#main-container").load("widget-detail.html");
+    function conversationsDetails(id){
+        selectedConversationsId=id;
+        $("#main-container").load("widget-messages.html");
     }
 
     function conversationsDelete(_id) {
