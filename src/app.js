@@ -34,8 +34,9 @@ app.set('mongouri', uri)
 const usersRepository = new UsersRepository(app, MongoClient)
 const offersRepository = new OffersRepository(app, MongoClient)
 const logsRepository = new LogsRepository(app, MongoClient)
+const conversationRepository = new ConversationsRepository(app, MongoClient)
 
-require('./util/dbInit')(app, MongoClient, usersRepository, offersRepository, logsRepository)
+require('./util/dbInit')(app, MongoClient, usersRepository, offersRepository, logsRepository, conversationRepository)
 
 // Initialize logger
 loggerW = createLogger({

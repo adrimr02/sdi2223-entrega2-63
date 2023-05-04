@@ -7,10 +7,11 @@ const { hashSync } = require("bcrypt")
  * @param {import("../repositories/offersRepository")} offersRepo 
  * @param {import("../repositories/logsRepository")} logsRepo 
  */
-module.exports = async function(app, mongoClient, usersRepo, offersRepo, logsRepo) {
+module.exports = async function(app, mongoClient, usersRepo, offersRepo, logsRepo,conversationRepo) {
   await dropDatabase(app, mongoClient)
   addUsers(usersRepo)
   addOffers(offersRepo)
+  addConversations(conversationRepo)
 }
 
 /**
@@ -78,4 +79,15 @@ async function addOffers(offersRepo)
     available: false,
     featured: false
   })
+}
+
+async function addConversations(conversationsRepo)
+{
+  conversationsRepo.insertConversation( {
+    buyer: "user02@email.com",
+    offer: "Mesa",
+    message: [1,2,3],
+    date: new Date()
+  })
+
 }
