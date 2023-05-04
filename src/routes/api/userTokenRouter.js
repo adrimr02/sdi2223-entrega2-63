@@ -1,8 +1,10 @@
+const jwt = require("jsonwebtoken")
 const router = require('express').Router()
 
 router.use((req, res, next) => {
+  console.log("Pase por el router")
   let token = req.headers['token'] || req.body.token || req.query.token
-  if (token != null) {
+  if (token) {
     // verificar el token
     jwt.verify(token, 'secreto', {}, function (err, infoToken) {
       if (err || (Date.now() / 1000 - infoToken.time) > 240) {
@@ -25,3 +27,5 @@ router.use((req, res, next) => {
     })
   }
 })
+
+module.exports = router

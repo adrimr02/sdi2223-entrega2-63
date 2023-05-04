@@ -1,1 +1,80 @@
-<h1>Conversaciones</h1>
+<div id="widget-conversations" >
+    <h1>Mis Conversaciones</h1>
+    <button class="btn" onclick="loadConversations()" >Actualizar</button>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>Comprador</th>
+            <th>Oferta</th>
+            <th class="col-md-1"></th>
+        </tr>
+        </thead>
+        <tbody id="conversationsTableBody"></tbody>
+    </table>
+</div>
+
+<script>
+    var selectedConversationsId;
+    var conversations;
+
+    function loadConversations(){
+        $.ajax({
+            url:URLbase+"/conversations",
+            type:"POST",
+            data:{},
+            dataType:'json',
+            headers: {"token": token},
+            success: function(response){
+                if (Cookies.get('token') != null ) {
+                    conversations = response.conversations;
+                    updateConversations(conversations);
+                }else{
+                    $( "#main-container" ).load("widget-login.html");
+                }
+            },
+            error: function (error) {
+                $("#main-container").load("widget-chats.html");
+            }
+        });
+    }
+
+    function updateConversations(conversations) {
+        $("#conversationsTableBody").empty(); // Vaciar la tabla
+        for (i = 0; i <conversations.length; i++) {
+            $("#conversationsTableBody").append(
+                "<tr id=" + conversations[i]._id + ">" +
+                "<td>" + conversations[i].buyer + "</td>" +
+                "<td>" + conversations[i].offer + "</td>" +
+                "<td>" +
+                "<a onclick=conversationsDetails('" + conversations[i]._id + "')>Mensajes</a><br>" +
+                "<a onclick=conversationsDelete('" + conversations[i]._id + "')>Eliminar</a>" +
+                "</td>" +
+                "</tr>");
+        }
+    }
+
+    function conversationsDetails(id){
+        selectedConversationsId=id;
+        $("#main-container").load("widget-messages.html");
+    }
+
+    function conversationsDelete(_id) {
+        $.ajax({
+            url: URLbase + "/conversations/" + _id,
+            type: "DELETE",
+            data: {},
+            dataType: 'json',
+            headers: {"token": token},
+            success: function (response) {
+                console.log("Conversacion eliminada: " + _id);
+                $("#" + _id).remove(); // eliminar el <tr> de la canción
+            },
+            error: function (error) {
+                $("#main-container").load("widget-login.html");
+            }
+        });
+    }
+
+
+    loadConversations();
+</script>

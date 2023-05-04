@@ -20,7 +20,7 @@
   </div>
 </div>
 <script>
-  $("#boton-login").click(function() {
+    $("#boton-login").click(function() {
     $.ajax({
       url: URLbase + '/users/login',
       type: 'POST',
@@ -30,8 +30,8 @@
       },
       dataType: 'json',
       success: function(response) {
-        token = response.token
-        Cookies.set('token', response.token);
+        token = response.data.token
+        Cookies.set('token', response.data.token);
         $('#main-container').load('widget-offers.html')
       },
       error: function(error) {
