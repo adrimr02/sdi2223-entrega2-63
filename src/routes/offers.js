@@ -9,19 +9,20 @@ const { ObjectId } = require("mongodb")
 module.exports = function(app, offerRepo, userRepo) {
 
   app.get('/shop', async (req, res) => {
-    console.log(req.query)
     let filter = {}
     let options = {sort: { title: 1}}
     
     if(req.query.search){
-      filter.title = { $regex: `.*${req.query.search}.*` }
+      filter.title = { $regex: `.*${req.query.search}.*`, $options: 'i' }
     }
     const page = req.query.page || 1
     const { offers, total: totalOfferCount } = await offerRepo.getOffersPage(filter, options, page, 5)
     const featured = await offerRepo.getOffers({ featured: true }, {})
     const pages = getPages(totalOfferCount, page, 5)
+    console.log(featured)
     res.render("shop.twig", {
       user: req.session.user,
+      wallet: req.session.wallet,
       offers: offers.map(o => ({ ...o, date: formatDate(o.date) })),
       featured: featured.map(o => ({ ...o, date: formatDate(o.date) })),
       pages,
@@ -32,12 +33,15 @@ module.exports = function(app, offerRepo, userRepo) {
   })
 
   app.get('/offers/new', (req, res) => {
-    res.render('offers/new')
+    res.render('offers/new', {
+      user: req.session.user,
+      wallet: req.session.wallet,
+    })
   })
 
   app.post('/offers/new', async (req, res) => {
     if (!req.body.title.trim() || !req.body.price.trim()) {
-      res.redirect('/offers/new?message=Debes incluir, al menos, el título y el precio&messageType=alert-danger')
+      res.redirect('/offers/new?message=Debes incluir, al menos, el título y el precio.&messageType=alert-danger')
       return
     }
 
@@ -48,26 +52,33 @@ module.exports = function(app, offerRepo, userRepo) {
       date: new Date(),
       seller: req.session.user,
       available: true,
-      featured: req.body.featured || false
+      featured: (!!req.body.featured) || false
     }
 
     const errors = []
 
     if (offer.price <= 0) {
-      errors.push('El precio debe ser mayor que 0')
+      errors.push('El precio debe ser mayor que 0.')
     }
 
     if (offer.title.length < 5) {
-      errors.push('El título debe tener al menos 5 caracteres')
+      errors.push('El título debe tener al menos 5 caracteres.')
     }
 
     if (offer.title.length > 30) {
-      errors.push('El título debe tener menos de 30 caracteres')
+      errors.push('El título debe tener menos de 30 caracteres.')
     }
-
+    
+    const { _id, wallet } = await userRepo.findUser({ email: req.session.user })
+    if (wallet < 20) {
+      errors.push('No tienes suficiente dinero para destacar la oferta.')
+    }
+    console.log(_id, wallet)
     if (errors.length === 0) {
-      if (offer.featured)
-        await userRepo.updateUser({ email: req.session.user }, { $set: {wallet: user.wallet - 20 } })
+      if (offer.featured) {
+        await userRepo.updateUser(new ObjectId(_id), { $set: { wallet: wallet - 20 } })
+        req.session.wallet = wallet - 20
+      }
       await offerRepo.insertOffer(offer)
       res.redirect('/offers/my-offers?message=Oferta creada.&messageType=alert-success')
     } else {
@@ -77,18 +88,16 @@ module.exports = function(app, offerRepo, userRepo) {
   })
 
   app.get('/offers/my-offers', async (req, res) => {
-
-    const filter = { author: req.session.user }
+    const filter = { seller: req.session.user }
     const options = { sort: { date: -1 } }
 
     const page = req.query.page || 1
     const { offers, total: totalOfferCount } = await offerRepo.getOffersPage(filter, options, page )
-
     const pages = getPages(totalOfferCount, page)
-
 
     res.render('offers/myOffers', {
       user: req.session.user,
+      wallet: req.session.wallet,
       offers: offers.map(o => ({ ...o, date: formatDate(o.date) })),
       currentPage: page,
       pages
@@ -102,11 +111,11 @@ module.exports = function(app, offerRepo, userRepo) {
 
     const page = req.query.page || 1
     const { offers, total: totalOfferCount } = await offerRepo.getOffersPage(filter, options, page)
-
     const pages = getPages(totalOfferCount, page)
 
     res.render('offers/bought', {
       user: req.session.user,
+      wallet: req.session.wallet,
       offers,
       currentPage: page,
       pages
@@ -120,7 +129,7 @@ module.exports = function(app, offerRepo, userRepo) {
         res.redirect('/offers/my-offers?message=La oferta que intentas eliminar no existe.&messageType=alert-danger')
         return
       }
-      if (offer.author !== req.session.user) {
+      if (offer.seller !== req.session.user) {
         res.redirect('/offers/my-offers?message=Esa oferta no es tuya. No puedes eliminarla.&messageType=alert-danger')
         return
       }
@@ -132,7 +141,6 @@ module.exports = function(app, offerRepo, userRepo) {
         res.redirect('/offers/my-offers?message=Oferta eliminada.&messageType=alert-success')
       }
     } catch(err) {
-      console.log(err)
       res.redirect('/offers/my-offers?message=Se ha producido un error al eliminar la oferta.&messageType=alert-danger')
     }
   })
@@ -144,7 +152,7 @@ module.exports = function(app, offerRepo, userRepo) {
         res.redirect('/shop?message=La oferta que intentas comprar no existe.&messageType=alert-danger')
         return
       }
-      if (offer.author === req.session.user) {
+      if (offer.seller === req.session.user) {
         res.redirect('/shop?message=No puedes comprar tu propia oferta.&messageType=alert-danger')
         return
       }
@@ -154,20 +162,49 @@ module.exports = function(app, offerRepo, userRepo) {
       }
       const user = await userRepo.findUser({ email: req.session.user }, {})
       if (user.wallet < offer.price) {
-        if (!offer) {
-          res.redirect('/shop?message=No tienes suficiente dinero.&messageType=alert-danger')
-          return
-        }
+        res.redirect('/shop?message=No tienes suficiente dinero.&messageType=alert-danger')
+        return
       }
-      await userRepo.updateUser({ _id: user._id }, { $set: {wallet: user.wallet - offer.price } })
+      await userRepo.updateUser(new ObjectId(user._id), { $set: {wallet: user.wallet - offer.price } })
+      req.session.wallet = user.wallet - offer.price
       await offerRepo.updateOffer(new ObjectId(req.params.id), { $set: { available: false, buyer: req.session.user }})
       res.redirect('/offers/bought?message=Oferta comprada.&messageType=alert-success')
     } catch(err) {
-      console.log(err)
       res.redirect('/shop?message=Se ha producido un error al comprar la oferta.&messageType=alert-danger')
     }
   })
 
+  app.get('/offers/feature/:id', async (req, res) => {
+    try {
+      const offer = await offerRepo.findOffer({ _id: new ObjectId(req.params.id) }, {})
+      if (!offer) {
+        res.redirect('/offers/my-offers?message=La oferta que intentas destacar no existe.&messageType=alert-danger')
+        return
+      }
+      if (offer.seller !== req.session.user) {
+        res.redirect('/offers/my-offers?message=Solo puedes destacar tus ofertas.&messageType=alert-danger')
+        return
+      }
+      if (!offer.available) {
+        res.redirect('/offers/my-offers?message=Esta oferta ya esta vendida.&messageType=alert-danger')
+        return
+      }
+      const user = await userRepo.findUser({ email: req.session.user }, {})
+      if (user.wallet < 20) {
+        if (!offer) {
+          res.redirect('/offers/my-offers?message=No tienes suficiente dinero.&messageType=alert-danger')
+          return
+        }
+      }
+      await userRepo.updateUser(new ObjectId(user._id), { $set: {wallet: user.wallet - 20 } })
+      req.session.wallet = user.wallet - 20
+      await offerRepo.updateOffer(new ObjectId(req.params.id), { $set: { featured: true }})
+      res.redirect('/offers/my-offers?message=Oferta destacada.&messageType=alert-success')
+    } catch(err) {
+      console.log(err)
+      res.redirect('/offers/my-offers?message=Se ha producido un error al destacar la oferta.&messageType=alert-danger')
+    }
+  })
 }
 
 function getPages(total, currentPage, pageSize = 8) {

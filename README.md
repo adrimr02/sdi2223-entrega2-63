@@ -24,7 +24,7 @@
     * Pruebas x
   * Listar ofertas compradas ✓
     * Pruebas x
-  * Marcar oferta como destacada x
+  * Marcar oferta como destacada ✓
     * Pruebas x
   * Seguridad y auditoria x
     * Pruebas x
