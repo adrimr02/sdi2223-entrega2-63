@@ -77,15 +77,15 @@ class Sdi2223Entrega2TestApplicationTests {
         //Vamos al formulario de registro
         PO_HomeView.clickOption(driver, "signup", "class", "btn btn-primary");
         //Rellenamos el formulario
-        PO_SignUpView.fillForm(driver, "newuser", "20", "newuser@email.com",
-                "10/12/2002", "newpass", "newpass");
+        PO_SignUpView.fillForm(driver, "newuser1", "20", "newuser1@email.com",
+                "10/12/2002", "newpass1", "newpass1");
         //Comprobamos que entramos en la sección privada y nos nuestra el texto a buscar
         List<WebElement> result = PO_View.checkElementBy(driver, "text", "Mis ofertas");
         Assertions.assertEquals("Mis ofertas", result.get(0).getText());
     }
 
     /**
-     * Registro de Usuario con datos inválidos (email vacío, nombre vacío, apellidos vacíos)
+     * Registro de Usuario con datos inválidos (campos vacíos)
      */
     @Test
     @Order(2)
@@ -106,7 +106,14 @@ class Sdi2223Entrega2TestApplicationTests {
     @Test
     @Order(3)
     void P3() {
-
+        //Vamos al formulario de registro
+        PO_HomeView.clickOption(driver, "signup", "class", "btn btn-primary");
+        //Rellenamos el formulario
+        PO_SignUpView.fillForm(driver, "newuser2", "20", "newuser2@email.com",
+                "10/12/2002", "newpass2", "newpass1");
+        //Comprobamos que entramos en la sección privada y nos nuestra el texto a buscar
+        List<WebElement> result = PO_View.checkElementBy(driver, "text", "Las contraseñas no coinciden.");
+        Assertions.assertEquals(1, result.size());
     }
 
     /**
@@ -115,7 +122,14 @@ class Sdi2223Entrega2TestApplicationTests {
     @Test
     @Order(4)
     void P4() {
-
+        //Vamos al formulario de registro
+        PO_HomeView.clickOption(driver, "signup", "class", "btn btn-primary");
+        //Rellenamos el formulario
+        PO_SignUpView.fillForm(driver, "newuser3", "20", "user01@email.com",
+                "10/12/2002", "newpass3", "newpass3");
+        //Comprobamos que entramos en la sección privada y nos nuestra el texto a buscar
+        List<WebElement> result = PO_View.checkElementBy(driver, "text", "El email ya está en uso.");
+        Assertions.assertEquals(1, result.size());
     }
 
     /* Ejemplos de pruebas de llamada a una API-REST */

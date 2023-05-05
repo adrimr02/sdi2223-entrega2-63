@@ -26,7 +26,7 @@ module.exports = function(app, usersRepository) {
     const user = await usersRepository.findUser({ email })
 
     if (user) {
-      errors.push('Ese email ya está en uso.')
+      errors.push('El email ya está en uso.')
     }
 
     if (password.length < 6) {
