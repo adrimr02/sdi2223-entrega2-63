@@ -1,7 +1,7 @@
-package com.uniovi.sdi2223entrega2test.n.pageobjects;
+package com.uniovi.sdi2223entrega2test63.pageobjects;
 
 import java.util.List;
-import com.uniovi.sdi2223entrega2test.n.util.SeleniumUtils;
+import com.uniovi.sdi2223entrega2test63.util.SeleniumUtils;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 

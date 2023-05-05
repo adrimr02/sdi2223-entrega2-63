@@ -3,7 +3,6 @@
 * ### Aplicación Web:
   * Registrarse como usuario ✓
     * Pruebas x
-    * Falta cumpleaños
   * Iniciar sesión ✓
     * Pruebas
   * Cerrar sesión ✓
