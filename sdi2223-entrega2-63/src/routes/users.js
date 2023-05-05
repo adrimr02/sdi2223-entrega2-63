@@ -1,7 +1,6 @@
 const { hashSync, compareSync, genSaltSync } = require('bcrypt')
 const loggerW = require("../util/logger")
 const dateValidation = require('../util/dateValidation')
-const { error } = require('winston')
 /**
  * 
  * @param {import("express").Application} app 
@@ -20,6 +19,8 @@ module.exports = function(app, usersRepository) {
 
     if (!email || !name || !lastname || !birthday || !password || !repeatPassword) {
       errors.push('Es obligatorio rellenar todos los campos.')
+      res.redirect(`/signup?message=${errors.join('<br>')}&messageType=alert-danger`)
+      return
     }
 
     const user = await usersRepository.findUser({ email })

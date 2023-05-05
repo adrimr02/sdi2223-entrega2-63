@@ -1,12 +1,20 @@
 package com.uniovi.sdi2223entrega2test63;
 
+import com.uniovi.sdi2223entrega2test63.pageobjects.PO_HomeView;
+import com.uniovi.sdi2223entrega2test63.pageobjects.PO_SignUpView;
+import com.uniovi.sdi2223entrega2test63.pageobjects.PO_View;
+import com.uniovi.sdi2223entrega2test63.util.MongoDB;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.json.simple.JSONObject;
 import org.junit.jupiter.api.*;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
+
+import java.util.List;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class Sdi2223Entrega2TestApplicationTests {
@@ -31,6 +39,8 @@ class Sdi2223Entrega2TestApplicationTests {
 
     @BeforeEach
     public void setUp() {
+        MongoDB m = new MongoDB();
+        m.resetMongo();
         driver.navigate().to(URL);
     }
 
@@ -48,70 +58,65 @@ class Sdi2223Entrega2TestApplicationTests {
     //Al finalizar la última prueba
     @AfterAll
     static public void end() {
-//Cerramos el navegador al finalizar las pruebas
+        //Cerramos el navegador al finalizar las pruebas
         driver.quit();
     }
 
+    /*
+     + ###################
+     * Pruebas de registro de usuario
+     * ###################
+     */
+
+    /**
+     * Registro de Usuario con datos válidos
+     */
     @Test
-    @Order(1)
-    void PR01() {
-        Assertions.assertTrue(true, "PR01 sin hacer");
+    @Order( 1 )
+    void P1() {
+        //Vamos al formulario de registro
+        PO_HomeView.clickOption(driver, "signup", "class", "btn btn-primary");
+        //Rellenamos el formulario
+        PO_SignUpView.fillForm(driver, "newuser", "20", "newuser@email.com",
+                "10/12/2002", "newpass", "newpass");
+        //Comprobamos que entramos en la sección privada y nos nuestra el texto a buscar
+        List<WebElement> result = PO_View.checkElementBy(driver, "text", "Mis ofertas");
+        Assertions.assertEquals("Mis ofertas", result.get(0).getText());
     }
 
+    /**
+     * Registro de Usuario con datos inválidos (email vacío, nombre vacío, apellidos vacíos)
+     */
     @Test
     @Order(2)
-    public void PR02() {
-        Assertions.assertTrue(false, "PR02 sin hacer");
+    void P2() {
+        //Vamos al formulario de registro
+        PO_HomeView.clickOption(driver, "signup", "class", "btn btn-primary");
+        //Pulsamos el botón para enviar el formulario sin haberlo rellenado
+        By boton = By.className("btn");
+        driver.findElement(boton).click();
+        List<WebElement> result = PO_SignUpView.checkElementBy(driver, "text", "Es obligatorio rellenar todos los campos." );
+        Assertions.assertEquals(1, result.size());
     }
 
+
+    /**
+     * Registro de Usuario con datos inválidos (repetición de contraseña inválida)
+     */
     @Test
     @Order(3)
-    public void PR03() {
-        Assertions.assertTrue(false, "PR03 sin hacer");
+    void P3() {
+
     }
 
+    /**
+     * Registro de Usuario con datos inválidos (email existente).
+     */
     @Test
     @Order(4)
-    public void PR04() {
-        Assertions.assertTrue(false, "PR04 sin hacer");
-    }
+    void P4() {
 
-    @Test
-    @Order(5)
-    public void PR05() {
-        Assertions.assertTrue(false, "PR05 sin hacer");
     }
-
-    @Test
-    @Order(6)
-    public void PR06() {
-        Assertions.assertTrue(false, "PR06 sin hacer");
-    }
-
-    @Test
-    @Order(7)
-    public void PR07() {
-        Assertions.assertTrue(false, "PR07 sin hacer");
-    }
-
-    @Test
-    @Order(8)
-    public void PR08() {
-        Assertions.assertTrue(false, "PR08 sin hacer");
-    }
-
-    @Test
-    @Order(9)
-    public void PR09() {
-        Assertions.assertTrue(false, "PR09 sin hacer");
-    }
-
-    @Test
-    @Order(10)
-    public void PR10() {
-        Assertions.assertTrue(false, "PR10 sin hacer");
-    }
-
 
     /* Ejemplos de pruebas de llamada a una API-REST */
     /* ---- Probamos a obtener lista de canciones sin token ---- */

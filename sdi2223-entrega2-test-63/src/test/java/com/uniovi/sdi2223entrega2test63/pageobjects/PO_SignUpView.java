@@ -5,25 +5,29 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public class PO_SignUpView extends PO_NavView {
-    static public void fillForm(WebDriver driver, String dnip, String namep, String lastnamep, String
+    static public void fillForm(WebDriver driver, String namep, String lastnamep, String emailp, String birthdayp, String
             passwordp, String passwordconfp) {
-        WebElement dni = driver.findElement(By.name("dni"));
-        dni.click();
-        dni.clear();
-        dni.sendKeys(dnip);
         WebElement name = driver.findElement(By.name("name"));
         name.click();
         name.clear();
         name.sendKeys(namep);
-        WebElement lastname = driver.findElement(By.name("lastName"));
+        WebElement lastname = driver.findElement(By.name("lastname"));
         lastname.click();
         lastname.clear();
         lastname.sendKeys(lastnamep);
+        WebElement birthday = driver.findElement(By.name("birthday"));
+        birthday.click();
+        birthday.clear();
+        birthday.sendKeys(birthdayp);
+        WebElement email = driver.findElement(By.name("email"));
+        email.click();
+        email.clear();
+        email.sendKeys(emailp);
         WebElement password = driver.findElement(By.name("password"));
         password.click();
         password.clear();
         password.sendKeys(passwordp);
-        WebElement passwordConfirm = driver.findElement(By.name("passwordConfirm"));
+        WebElement passwordConfirm = driver.findElement(By.name("repeatPassword"));
         passwordConfirm.click();
         passwordConfirm.clear();
         passwordConfirm.sendKeys(passwordconfp);

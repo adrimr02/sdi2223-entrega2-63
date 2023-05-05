@@ -27,7 +27,6 @@ public class PO_LoginView extends PO_NavView {
 	}
 
 	static public void logout(WebDriver driver, String checkKeyText) {
-		String loginText = getP().getString(checkKeyText, PO_Properties.getSPANISH());
-		clickOption(driver, "logout", "text", loginText);
+		clickOption(driver, "logout", "text", "Cerrar sesión");
 	}
 }
