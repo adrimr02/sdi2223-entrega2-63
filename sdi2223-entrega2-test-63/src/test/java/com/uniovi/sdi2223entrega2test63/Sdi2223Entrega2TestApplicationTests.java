@@ -1,10 +1,8 @@
 package com.uniovi.sdi2223entrega2test63;
 
-import com.uniovi.sdi2223entrega2test63.pageobjects.PO_HomeView;
-import com.uniovi.sdi2223entrega2test63.pageobjects.PO_LoginView;
-import com.uniovi.sdi2223entrega2test63.pageobjects.PO_SignUpView;
-import com.uniovi.sdi2223entrega2test63.pageobjects.PO_View;
+import com.uniovi.sdi2223entrega2test63.pageobjects.*;
 import com.uniovi.sdi2223entrega2test63.util.MongoDB;
+import com.uniovi.sdi2223entrega2test63.util.SeleniumUtils;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
@@ -64,7 +62,7 @@ class Sdi2223Entrega2TestApplicationTests {
     }
 
     /*
-     + ###################
+     * ###################
      * Pruebas de registro de usuario
      * ###################
      */
@@ -134,7 +132,7 @@ class Sdi2223Entrega2TestApplicationTests {
     }
 
     /*
-     + ###################
+     * ###################
      * Pruebas de Login
      * ###################
      */
@@ -170,11 +168,26 @@ class Sdi2223Entrega2TestApplicationTests {
     }
 
     /**
-     * Inicio de sesión con datos inválidos (usuario estándar, campo email y contraseña vacíos)
+     * Inicio de sesión con datos inválidos (usuario estándar, email existente, pero contraseña
+     * incorrecta).
      */
     @Test
     @Order(7)
     void P7() {
+        //Vamos al formulario de logueo.
+        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        //Rellenamos el formulario
+        PO_LoginView.fillLoginForm(driver, "user01@email.com", "user02");
+        List<WebElement> result = PO_LoginView.checkElementBy(driver, "text", "Email o contraseña inválidos.");
+        Assertions.assertEquals(1, result.size());
+    }
+
+    /**
+     * Inicio de sesión con datos inválidos (campo email o contraseña vacíos)
+     */
+    @Test
+    @Order(8)
+    void P8() {
         //Vamos al formulario de logueo.
         PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
         //Pulsamos el botón para enviar el formulario sin haberlo rellenado
@@ -184,18 +197,41 @@ class Sdi2223Entrega2TestApplicationTests {
         Assertions.assertEquals(1, result.size());
     }
 
+    /*
+     * ###################
+     * Pruebas de Logout
+     * ###################
+     */
+
     /**
-     * Inicio de sesión con datos válidos (usuario estándar, email existente, pero contraseña incorrecta)
+     * Hacer click en la opción de salir de sesión y comprobar que se redirige a la página de inicio
+     * de sesión (Login)
      */
     @Test
-    @Order(8)
-    void P8() {
+    @Order( 9 )
+    void P9() {
         //Vamos al formulario de logueo.
         PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
         //Rellenamos el formulario
-        PO_LoginView.fillLoginForm(driver, "user01@email.com", "user02");
-        List<WebElement> result = PO_LoginView.checkElementBy(driver, "text", "Email o contraseña inválidos.");
-        Assertions.assertEquals(1, result.size());
+        PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
+        //Comprobamos que entramos en la pagina privada del usuario
+        List<WebElement> result = PO_View.checkElementBy(driver, "text", "Mis ofertas");
+        Assertions.assertEquals(2, result.size());
+        //Ahora nos desconectamos comprobamas que aparece el menu de login
+        PO_UserPrivateView.logout(driver);
+        List<WebElement> resultlogin = PO_View.checkElementBy(driver, "free", "/html/body/div/h2");
+        Assertions.assertEquals("Iniciar Sesión", resultlogin.get(0).getText());
+    }
+
+    /**
+     * Comprobar que el botón cerrar sesión no está visible si el usuario no está autenticado
+     */
+    @Test
+    @Order( 10 )
+    public void P10() {
+        // Comprueba que no existe el dropdown con la informacion del usuario,
+        // incluyendo el boton de logout
+        SeleniumUtils.textIsNotPresentOnPage( driver, "Cerrar sesión");
     }
 
     /* Ejemplos de pruebas de llamada a una API-REST */
