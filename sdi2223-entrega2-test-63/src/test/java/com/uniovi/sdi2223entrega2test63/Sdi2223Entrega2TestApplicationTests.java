@@ -1,6 +1,7 @@
 package com.uniovi.sdi2223entrega2test63;
 
 import com.uniovi.sdi2223entrega2test63.pageobjects.PO_HomeView;
+import com.uniovi.sdi2223entrega2test63.pageobjects.PO_LoginView;
 import com.uniovi.sdi2223entrega2test63.pageobjects.PO_SignUpView;
 import com.uniovi.sdi2223entrega2test63.pageobjects.PO_View;
 import com.uniovi.sdi2223entrega2test63.util.MongoDB;
@@ -39,8 +40,6 @@ class Sdi2223Entrega2TestApplicationTests {
 
     @BeforeEach
     public void setUp() {
-        MongoDB m = new MongoDB();
-        m.resetMongo();
         driver.navigate().to(URL);
     }
 
@@ -53,6 +52,8 @@ class Sdi2223Entrega2TestApplicationTests {
     //Antes de la primera prueba
     @BeforeAll
     static public void begin() {
+        MongoDB m = new MongoDB();
+        m.resetMongo();
     }
 
     //Al finalizar la última prueba
@@ -129,6 +130,71 @@ class Sdi2223Entrega2TestApplicationTests {
                 "10/12/2002", "newpass3", "newpass3");
         //Comprobamos que entramos en la sección privada y nos nuestra el texto a buscar
         List<WebElement> result = PO_View.checkElementBy(driver, "text", "El email ya está en uso.");
+        Assertions.assertEquals(1, result.size());
+    }
+
+    /*
+     + ###################
+     * Pruebas de Login
+     * ###################
+     */
+
+    /**
+     * Inicio de sesión con datos válidos (administrador)
+     */
+    @Test
+    @Order(5)
+    void P5() {
+        //Vamos al formulario de logueo.
+        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        //Rellenamos el formulario
+        PO_LoginView.fillLoginForm(driver, "admin@email.com", "admin");
+        //Comprobamos que entramos en la pagina privada del administrador
+        List<WebElement> result = PO_View.checkElementBy(driver, "text", "Usuarios:");
+        Assertions.assertEquals("Usuarios:", result.get(0).getText());
+    }
+
+    /**
+     * Inicio de sesión con datos válidos (usuario estándar)
+     */
+    @Test
+    @Order(6)
+    void P6() {
+        //Vamos al formulario de logueo.
+        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        //Rellenamos el formulario
+        PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
+        //Comprobamos que entramos en la pagina privada del usuario
+        List<WebElement> result = PO_View.checkElementBy(driver, "text", "Mis ofertas");
+        Assertions.assertEquals("Mis ofertas", result.get(0).getText());
+    }
+
+    /**
+     * Inicio de sesión con datos inválidos (usuario estándar, campo email y contraseña vacíos)
+     */
+    @Test
+    @Order(7)
+    void P7() {
+        //Vamos al formulario de logueo.
+        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        //Pulsamos el botón para enviar el formulario sin haberlo rellenado
+        By boton = By.className("btn");
+        driver.findElement(boton).click();
+        List<WebElement> result = PO_LoginView.checkElementBy(driver, "text", "Es obligatorio rellenar todos los campos.");
+        Assertions.assertEquals(1, result.size());
+    }
+
+    /**
+     * Inicio de sesión con datos válidos (usuario estándar, email existente, pero contraseña incorrecta)
+     */
+    @Test
+    @Order(8)
+    void P8() {
+        //Vamos al formulario de logueo.
+        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        //Rellenamos el formulario
+        PO_LoginView.fillLoginForm(driver, "user01@email.com", "user02");
+        List<WebElement> result = PO_LoginView.checkElementBy(driver, "text", "Email o contraseña inválidos.");
         Assertions.assertEquals(1, result.size());
     }
 

@@ -58,7 +58,7 @@ public class MongoDB {
 		MongoCollection<Document> usuarios = getMongodb().getCollection("users");
 		Document admin = new Document().append("nombre", "admin").append("apellidos", "admin")
 				.append("email", "admin@email.com")
-				.append("password", "ebd5359e500475700c6cc3dd4af89cfd0569aa31724a1bf10ed1e3019dcfdb11")
+				.append("password", BCrypt.hashpw("admin", BCrypt.gensalt()))
 				.append("saldo", 100).append("userType", "admin");
 		usuarios.insertOne(admin);
 

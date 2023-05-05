@@ -35,7 +35,7 @@ async function addUsers(usersRepo) {
     email: 'admin@email.com',
     name: 'admin',
     lastname: 'user',
-    //birthday,
+    birthday: new Date('12/2/1998'),
     password: hashSync('admin', 10),
     wallet: 100,
     userType: 'admin'
@@ -48,7 +48,7 @@ async function addUsers(usersRepo) {
       email: `user${userPrefix}@email.com`,
       name: 'user',
       lastname: `${userPrefix}`,
-      //birthday,
+      birthday: new Date('12/2/1998'),
       password: hashSync(`user${userPrefix}`, 10),
       wallet: 100,
       userType: 'standard'

@@ -82,13 +82,13 @@ module.exports = function(app, usersRepository) {
     const errors = []
 
     if (!email || !password) {
-      errors.push('Es obligatorio rellenar todos los campos')
+      errors.push('Es obligatorio rellenar todos los campos.')
     }
 
     const user = await usersRepository.findUser({ email })
 
     if (!user || !compareSync(password, user.password)) {
-      errors.push('Email o contraseña inválidos')
+      errors.push('Email o contraseña inválidos.')
     }
 
     if (errors.length === 0) {
@@ -100,9 +100,9 @@ module.exports = function(app, usersRepository) {
         user: user.email
       });
       if(req.session.user === "admin@email.com"){
-        res.redirect('/users?message=Sesión iniciada&messageType=alert-success')
+        res.redirect('/users?message=Sesión iniciada.&messageType=alert-success')
       }else{
-        res.redirect('/offers/my-offers?message=Sesión iniciada&messageType=alert-success')
+        res.redirect('/offers/my-offers?message=Sesión iniciada.&messageType=alert-success')
       }
     } else {
       req.session.user = null
