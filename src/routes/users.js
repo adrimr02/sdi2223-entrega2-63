@@ -1,9 +1,9 @@
 const { hashSync, compareSync, genSaltSync } = require('bcrypt')
-
+const loggerW = require("../util/logger")
 /**
  * 
  * @param {import("express").Application} app 
- * @param {import("../repositories/usersRepository")} usersRepository 
+ * @param {import("../repositories/usersRepository")} usersRepository
  */
 module.exports = function(app, usersRepository) {
 
@@ -49,12 +49,12 @@ module.exports = function(app, usersRepository) {
       await usersRepository.insertUser(newUser)
       req.session.user = newUser.email
       req.session.wallet = newUser.wallet
-      /*loggerW.info({
+      loggerW.info({
         type: "ALTA",
         method: req.method,
         url: req.originalUrl,
         params: req.params
-      });*/
+      });
       res.redirect('/offers/my-offers?message=Cuenta creada con exito&messageType=alert-success')
     } else {
       req.session.user = null
@@ -86,10 +86,10 @@ module.exports = function(app, usersRepository) {
       req.session.user = user.email
       req.session.wallet = user.wallet
       req.session.isAdmin = user.userType === 'admin'
-      /*loggerW.info({
+      loggerW.info({
         type: "LOGIN-EX",
         user: user.email
-      });*/
+      });
       if(req.session.user === "admin@email.com"){
         res.redirect('/users?message=Sesión iniciada&messageType=alert-success')
       }else{
@@ -97,20 +97,20 @@ module.exports = function(app, usersRepository) {
       }
     } else {
       req.session.user = null
-      /*loggerW.info({
+      loggerW.info({
         type: "LOGIN-ERR",
         user: user.email
-      });*/
+      });
       res.redirect(`/signup?message=${errors.join('<br>')}&messageType=alert-danger`)
     }
 
   })
 
   app.get('/logout', (req, res) => {
-    /*loggerW.info({
+    loggerW.info({
       type: "LOGOUT",
       user: req.session.user
-    });*/
+    });
     req.session.user = null
     res.redirect('/login')
   })

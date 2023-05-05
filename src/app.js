@@ -8,8 +8,8 @@ const logger = require('morgan')
 const expressSession = require('express-session')
 const jwt = require('jsonwebtoken')
 const bodyParser = require('body-parser')
-const {createLogger, format, transports} = require("winston");
-let loggerW = require('winston-mongodb');
+/*const {createLogger, format, transports} = require("winston");
+let loggerW = require('winston-mongodb');*/
 
 // Import proyect files here
 const UsersRepository = require('./repositories/usersRepository')
@@ -39,9 +39,10 @@ const conversationRepository = new ConversationsRepository(app, MongoClient)
 const messageRepository = new MessageRepository(app,MongoClient)
 
 require('./util/dbInit')(app, MongoClient, usersRepository, offersRepository, logsRepository, conversationRepository,messageRepository)
+const loggerW = require("./util/logger")
 
 // Initialize logger
-loggerW = createLogger({
+/*loggerW = createLogger({
   transports: [
     new transports.MongoDB({
       db: 'mongodb://127.0.0.1:27017/mywallapop',
@@ -51,7 +52,7 @@ loggerW = createLogger({
       options: { useUnifiedTopology: true }
     })
   ]
-});
+});*/
 
 // View engine setup
 app.set('views', path.join(__dirname, 'views'))
@@ -75,10 +76,14 @@ app.use(logMiddleware);
 app.use('/signup', userNoSessionRouter)
 app.use('/login', userNoSessionRouter)
 app.use('/logout', userSessionRouter)
+//app.use('/logout', adminSessionRouter)
 app.use('/offers/*', userSessionRouter)
 app.use('/shop', userSessionRouter)
 app.use('/users', adminSessionRouter)
+app.use('/logs', adminSessionRouter)
+app.use('/api/offers', userTokenRouter)
 app.use('/api/conversations',userTokenRouter)
+
 
 // Set static files
 app.use(express.static(path.join(__dirname, '../public')))
@@ -89,6 +94,7 @@ require('./routes/offers')(app, offersRepository, usersRepository)
 require('./routes/admin')(app, usersRepository, offersRepository, logsRepository)
 require('./routes/api/authApi')(app, usersRepository)
 require('./routes/api/conversationsApi')(app, conversationRepository, messageRepository)
+require('./routes/api/offersApi')(app, offersRepository)
 
 app.get('/', userNoSessionRouter, (req, res) => {
   res.render('index')
