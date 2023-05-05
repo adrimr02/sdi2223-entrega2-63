@@ -1,5 +1,7 @@
 const { hashSync, compareSync, genSaltSync } = require('bcrypt')
 const loggerW = require("../util/logger")
+const dateValidation = require('../util/dateValidation')
+const { error } = require('winston')
 /**
  * 
  * @param {import("express").Application} app 
@@ -12,26 +14,32 @@ module.exports = function(app, usersRepository) {
   })
 
   app.post('/signup', async (req, res) => {
-    const { email, name, lastname, /*birthday,*/ password, repeatPassword } = req.body
+    const { email, name, lastname, birthday, password, repeatPassword } = req.body
 
     const errors = []
 
-    if (!email || !name || !lastname /*|| birthday*/ || !password || !repeatPassword) {
-      errors.push('Es obligatorio rellenar todos los campos')
+    if (!email || !name || !lastname || !birthday || !password || !repeatPassword) {
+      errors.push('Es obligatorio rellenar todos los campos.')
     }
 
     const user = await usersRepository.findUser({ email })
 
     if (user) {
-      errors.push('Ese email ya está en uso')
+      errors.push('Ese email ya está en uso.')
     }
 
     if (password.length < 6) {
-      errors.push('La contraseña debe incluir, al menos, 6 caracteres')
+      errors.push('La contraseña debe incluir, al menos, 6 caracteres.')
     }
 
     if (password !== repeatPassword) {
-      errors.push('Las contraseñas no coinciden')
+      errors.push('Las contraseñas no coinciden.')
+    }
+
+    if (!dateValidation(birthday)) {
+      errors.push('La fecha no es válida o no sigue el formato DD/MM/AAAA.')
+    } else if (new Date().getTime() < new Date(birthday).getTime()) {
+      errors.push('La fecha de cumpleaños no puede ser posterior a la actual.')
     }
 
     if (errors.length === 0) {
@@ -41,7 +49,7 @@ module.exports = function(app, usersRepository) {
         email,
         name,
         lastname,
-        //birthday,
+        birthday: new Date(birthday),
         password: hashedPass,
         wallet: 100,
         userType: 'standard'
@@ -99,9 +107,9 @@ module.exports = function(app, usersRepository) {
       req.session.user = null
       loggerW.info({
         type: "LOGIN-ERR",
-        user: user.email
+        user: email
       });
-      res.redirect(`/signup?message=${errors.join('<br>')}&messageType=alert-danger`)
+      res.redirect(`/login?message=${errors.join('<br>')}&messageType=alert-danger`)
     }
 
   })
