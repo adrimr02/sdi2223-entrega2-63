@@ -48,6 +48,7 @@ module.exports = class {
     }
   }
 
+
   async getOffersPage(filter , options, page, limit=8) {
     try {
       const client = await this.mongoClient.connect(this.app.get('mongouri'))
@@ -89,7 +90,8 @@ module.exports = class {
       const client = await this.mongoClient.connect(this.app.get('mongouri'))
       const database = client.db('mywallapop')
       const offersCollection = database.collection(this.collectionName)
-      return await offersCollection.deleteMany({ author: {$in: selectedUsers} })
+      const result = await offersCollection.deleteMany({ author: {$in: selectedUsers} })
+      return result.deletedCount;
     } catch (err) {
       throw err
     }

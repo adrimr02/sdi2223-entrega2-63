@@ -4,6 +4,44 @@
 
 {% block main_container %}
     <h2>Logs del sistema:</h2>
+    <div class="container">
+        <p>Filtrar por tipo:</p>
+        <select class="form-control" id="filterType" name="filterType" onchange="updateURL(this)">
+            <option value="">Todos</option>
+            <option value="PET">PET</option>
+            <option value="ALTA">ALTA</option>
+            <option value="LOGIN_EX">LOGIN-EX</option>
+            <option value="LOGIN_ERR">LOGIN-ERR</option>
+            <option value="LOGOUT">LOGOUT</option>
+        </select>
+    </div>
+    <!--
+    <script>
+        function updateURL(selectElement) {
+            var value = selectElement.value;
+            var url = window.location.href;
+            var newUrl;
+
+            // Check if there are existing query parameters in the URL
+            if (url.indexOf('?') > -1) {
+                // Remove any existing filterType query parameter
+                var regex = /[&\?]filterType=[^&]*/;
+                newUrl = url.replace(regex, '');
+
+                // Append the new filterType query parameter
+                if (value) {
+                    newUrl += '?filterType=' + value;
+                }
+            } else {
+                // If there are no existing query parameters, simply add the new filterType parameter
+                newUrl = url + '?filterType=' + value;
+            }
+
+            // Update the URL to include the new query parameters
+            window.history.replaceState(null, '', newUrl);
+        }
+    </script>
+    -->
     <form method="post" action="/logs">
         <div class="table-responsive">
             <table class="table table-hover">

@@ -49,13 +49,18 @@ module.exports = function(app, usersRepository, ofersReposiroty, logsRepository)
     const selectedUsers = req.body.selectedUsers;
     if(selectedUsers != undefined && selectedUsers.length > 0){
       usersRepository.deleteUsers(selectedUsers).then (result => {
-        ofersReposiroty.deleteOfferByAuthor(selectedUsers)
-        if (result === null || result.deletedCount === 0) {
-          errors.push('No se han podido eliminar los usuarios')
+        ofersReposiroty.deleteOfferByAuthor(selectedUsers).then (result2 => {
+          if (result === null || result2 === null || result.deletedCount === 0) {
+            errors.push('No se han podido eliminar los usuarios')
+            res.redirect(`/users?message=${errors.join('<br>')}&messageType=alert-danger`)
+          } else {
+            res.redirect('/users?message=Usuarios eliminados correctamente&messageType=alert-success')
+          }
+        }).catch(error => {
+          errors.push('Se ha producido un error al intentar eliminar las ofertas')
           res.redirect(`/users?message=${errors.join('<br>')}&messageType=alert-danger`)
-        } else {
-          res.redirect('/users?message=Usuarios eliminados correctamente&messageType=alert-success')
-        }
+        });
+
       }).catch(error => {
         errors.push('Se ha producido un error al intentar eliminar los usuarios')
         res.redirect(`/users?message=${errors.join('<br>')}&messageType=alert-danger`)
@@ -71,6 +76,11 @@ module.exports = function(app, usersRepository, ofersReposiroty, logsRepository)
     const errors = []
     let filter = {};
     let options = {sort: { timestamp: -1}};
+    /*if(req.query.filterType != null && typeof(req.query.filterType) != "undefined"
+        && req.query.filterType != "" && req.query.filterType != "Todos"){
+      //filter = { "title" : req.query.search };
+      filter = {"message": {$regex: ".*" + "type: '" + req.query.filterType + ".*"}};
+    }*/
     
     let page = parseInt(req.query.page); // page is a string
     if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0") {

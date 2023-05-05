@@ -65,7 +65,7 @@ async function addOffers(offersRepo)
     description: "Silla fabricada con madera de castaño",
     price: 150,
     date: new Date(),
-    seller: "usuario02@email.com",
+    seller: "user02@email.com",
     available: true,
     featured: true
   })
@@ -75,10 +75,211 @@ async function addOffers(offersRepo)
     description: "Mesa redonda fabricada con madera de roble",
     price: 350,
     date: new Date(),
-    seller: "usuario01@email.com",
+    seller: "user01@email.com",
     available: false,
     featured: false
   })
+
+  offersRepo.insertOffer( {
+    title: "Sofá",
+    description: "Sofá de cuero negro",
+    price: 500,
+    date: new Date(),
+    seller: "user03@email.com",
+    available: true,
+    featured: false
+  })
+
+  offersRepo.insertOffer( {
+    title: "Lámpara",
+    description: "Lámpara de pie moderna",
+    price: 100,
+    date: new Date(),
+    seller: "user04@email.com",
+    available: true,
+    featured: false
+  })
+
+  offersRepo.insertOffer( {
+    title: "Alfombra",
+    description: "Alfombra de lana tejida a mano",
+    price: 200,
+    date: new Date(),
+    seller: "user04@email.com",
+    available: true,
+    featured: false
+  })
+
+  offersRepo.insertOffer( {
+    title: "Mesa grande",
+    description: "Mesa de comedor extensible de roble",
+    price: 800,
+    date: new Date(),
+    seller: "user05@email.com",
+    available: false,
+    featured: false
+  })
+
+  offersRepo.insertOffer( {
+    title: "Cuadro",
+    description: "Cuadro abstracto pintado a mano",
+    price: 300,
+    date: new Date(),
+    seller: "user06@email.com",
+    available: true,
+    featured: false
+  })
+
+  offersRepo.insertOffer( {
+    title: "Sillón",
+    description: "Sillón orejero tapizado en tela de lino",
+    price: 400,
+    date: new Date(),
+    seller: "user07@email.com",
+    available: true,
+    featured: false
+  })
+
+  offersRepo.insertOffer( {
+    title: "Juego de café",
+    description: "Juego de café de porcelana china",
+    price: 50,
+    date: new Date(),
+    seller: "user08@email.com",
+    available: true,
+    featured: false
+  })
+
+  offersRepo.insertOffer( {
+    title: "Cama grande",
+    description: "Cama de matrimonio con cabecero de hierro forjado",
+    price: 600,
+    date: new Date(),
+    seller: "user09@email.com",
+    available: false,
+    featured: false
+  })
+
+  offersRepo.insertOffer( {
+    title: "Cortina",
+    description: "Cortina de seda estampada",
+    price: 150,
+    date: new Date(),
+    seller: "user10@email.com",
+    available: true,
+    featured: false
+  })
+
+  offersRepo.insertOffer( {
+    title: "Jarrón",
+    description: "Jarrón de cristal de Murano",
+    price: 250,
+    date: new Date(),
+    seller: "user11@email.com",
+    available: true,
+    featured: false
+  })
+
+  offersRepo.insertOffer( {
+    title: "Estantería",
+    description: "Estantería de madera maciza",
+    price: 200,
+    date: new Date(),
+    seller: "user12@email.com",
+    available: true,
+    featured: false
+  })
+
+  offersRepo.insertOffer( {
+    title: "Cuadro pequeño",
+    description: "Cuadro al óleo de paisaje",
+    price: 150,
+    date: new Date(),
+    seller: "user13@email.com",
+    available: false,
+    featured: false
+  })
+
+  offersRepo.insertOffer( {
+    title: "Sofá cama",
+    description: "Sofá cama de piel blanca",
+    price: 600,
+    date: new Date(),
+    seller: "user14@email.com",
+    available: true,
+    featured: false
+  })
+
+  offersRepo.insertOffer( {
+    title: "Lámpara de techo",
+    description: "Lámpara de techo de diseño",
+    price: 80,
+    date: new Date(),
+    seller: "user15@email.com",
+    available: true,
+    featured: false
+  })
+
+  offersRepo.insertOffer( {
+    title: "Silla grande",
+    description: "Silla de escritorio ergonómica",
+    price: 100,
+    date: new Date(),
+    seller: "user01@email.com",
+    available: true,
+    featured: false
+  })
+
+  offersRepo.insertOffer( {
+    title: "Mesa pequeña",
+    description: "Mesa de centro de cristal y acero",
+    price: 250,
+    date: new Date(),
+    seller: "user02@email.com",
+    available: true,
+    featured: false
+  })
+
+  offersRepo.insertOffer( {
+    title: "Escultura",
+    description: "Escultura de bronce abstracta",
+    price: 350,
+    date: new Date(),
+    seller: "user03@email.com",
+    available: false,
+    featured: false
+  })
+
+  offersRepo.insertOffer( {
+    title: "Alfombra persa",
+    description: "Alfombra persa de seda",
+    price: 800,
+    date: new Date(),
+    seller: "user04@email.com",
+    available: true,
+    featured: false
+  })
+
+  offersRepo.insertOffer( {
+    title: "Vitrina",
+    description: "Vitrina de madera y vidrio",
+    price: 450,
+    date: new Date(),
+    seller: "user05@email.com",
+    available: true,
+    featured: false
+  })
+
+  offersRepo.insertOffer( {
+    title: "Espejo",
+    description: "Espejo con marco dorado",
+    price: 120,
+    date: new Date(),
+    seller: "user06@email.com",
+    available: true,
+    featured: false
+  })
+
 }
 
 async function addConversations(conversationsRepo, messageRepo)
