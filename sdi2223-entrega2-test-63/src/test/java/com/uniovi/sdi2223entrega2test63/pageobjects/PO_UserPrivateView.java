@@ -49,14 +49,20 @@ public class PO_UserPrivateView extends PO_NavView {
         PO_View.checkElementBy(driver, "text", email);
     }
 
-    public static void navigateToNewOfferForm(WebDriver driver) {
-        // Pinchamos en la opción de menú de Notas
+    public static void navigateToMyOffers(WebDriver driver) {
         PO_View.checkElementBy(driver, "@href", "offers/my-offers").get(0).click();
-        PO_View.checkElementBy(driver, "free", "//h2[text()=\"Mis ofertas\"]");
+        List<WebElement> result = PO_View.checkElementBy(driver, "free", "//h2[text()=\"Mis ofertas\"]");
+        Assertions.assertEquals(1, result.size());
+    }
+
+    public static void navigateToNewOfferForm(WebDriver driver) {
+        PO_View.checkElementBy(driver, "@href", "offers/my-offers").get(0).click();
+        List<WebElement> result = PO_View.checkElementBy(driver, "free", "//h2[text()=\"Mis ofertas\"]");
+        Assertions.assertEquals(1, result.size());
         PO_HomeView.clickOption(driver, "offers/new", "text",
                 "Crear Oferta");
 
-        List<WebElement> result = PO_View.checkElementBy(driver, "text", "Crear Oferta");
+        result = PO_View.checkElementBy(driver, "text", "Crear Oferta");
         Assertions.assertEquals(1, result.size());
     }
 

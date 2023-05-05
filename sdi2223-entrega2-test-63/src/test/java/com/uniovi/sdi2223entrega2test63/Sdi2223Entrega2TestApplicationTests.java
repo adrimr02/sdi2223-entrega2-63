@@ -5,6 +5,7 @@ import com.uniovi.sdi2223entrega2test63.util.MongoDB;
 import com.uniovi.sdi2223entrega2test63.util.SeleniumUtils;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import io.restassured.response.ResponseBody;
 import io.restassured.specification.RequestSpecification;
 import org.json.simple.JSONObject;
 import org.junit.jupiter.api.*;
@@ -13,6 +14,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -245,8 +247,8 @@ class Sdi2223Entrega2TestApplicationTests {
      * Comprobar que la oferta sale en el listado de ofertas de dicho usuario.
      */
     @Test
-    @Order( 17 )
-    void P17() {
+    @Order( 16 )
+    void P16() {
         // Nos logueamos
         PO_UserPrivateView.loginToPrivateView( driver, "user01@email.com", "user01" );
 
@@ -272,8 +274,8 @@ class Sdi2223Entrega2TestApplicationTests {
      * en negativo) y pulsar el botón Submit. Comprobar que se muestra el mensaje de campo inválido.
      */
     @Test
-    @Order( 18 )
-    void P18() {
+    @Order( 17 )
+    void P17() {
         // Nos logueamos
         PO_UserPrivateView.loginToPrivateView( driver, "user01@email.com", "user01" );
 
@@ -293,8 +295,44 @@ class Sdi2223Entrega2TestApplicationTests {
 
     }
 
+    /*
+     + ###################
+     * Pruebas de listar ofertas creadas
+     * ###################
+     */
+
+    /**
+     * Mostrar el listado de ofertas para dicho usuario y comprobar que se muestran todas las que
+     * existen para este usuario.
+     */
+    @Test
+    @Order( 18 )
+    void P18() {
+        // Nos logueamos
+        PO_UserPrivateView.loginToPrivateView( driver, "user02@email.com", "user02" );
+
+        // Vamos a la lista de ofertas del usuario
+        PO_UserPrivateView.navigateToMyOffers(driver);
+
+        // Lista de ofertas generadas al iniciar la aplicación
+        List<String> offerTitles = new ArrayList<String>() {
+            {
+                add( "Silla" );
+                add( "Cuadro pequeño" );
+            }
+        };
+
+        // Comprobamos que las ofertas aparecen en la lista
+        for (String title : offerTitles) {
+            List<WebElement> elements = PO_View.checkElementBy(driver, "text", title);
+            Assertions.assertEquals(title, elements.get(0).getText());
+        }
+
+    }
+
     /* Ejemplos de pruebas de llamada a una API-REST */
     /* ---- Probamos a obtener lista de canciones sin token ---- */
+    /*
     @Test
     @Order(37)
     public void PR11() {
@@ -302,21 +340,77 @@ class Sdi2223Entrega2TestApplicationTests {
         Response response = RestAssured.get(RestAssuredURL);
         Assertions.assertEquals(403, response.getStatusCode());
     }
+    */
 
+    /*
+     + ###################
+     * Pruebas de login RestAPI
+     * ###################
+     */
+
+    /**
+     * Inicio de sesión con datos válidos.
+     */
     @Test
-    @Order(38)
-    public void PR38() {
-        final String RestAssuredURL = "http://localhost:8081/api/v1.0/users/login";
+    @Order( 38 )
+    public void P38() {
+        final String RestAssuredURL = URL + "/api/users/login";
         //2. Preparamos el parámetro en formato JSON
         RequestSpecification request = RestAssured.given();
         JSONObject requestParams = new JSONObject();
-        requestParams.put("email", "prueba1@prueba1.com");
-        requestParams.put("password", "prueba1");
+        requestParams.put("email", "user01@email.com");
+        requestParams.put("password", "user01");
         request.header("Content-Type", "application/json");
         request.body(requestParams.toJSONString());
         //3. Hacemos la petición
         Response response = request.post(RestAssuredURL);
         //4. Comprobamos que el servicio ha tenido exito
         Assertions.assertEquals(200, response.getStatusCode());
+        ResponseBody body = response.getBody();
+        Assertions.assertTrue(body.asString().contains("token"));
+    }
+
+    /**
+     * Inicio de sesión con datos inválidos (email existente, pero contraseña incorrecta).
+     */
+    @Test
+    @Order( 39 )
+    public void P39() {
+        final String RestAssuredURL = URL + "/api/users/login";
+        //2. Preparamos el parámetro en formato JSON
+        RequestSpecification request = RestAssured.given();
+        JSONObject requestParams = new JSONObject();
+        requestParams.put("email", "user01@email.com");
+        requestParams.put("password", "user02");
+        request.header("Content-Type", "application/json");
+        request.body(requestParams.toJSONString());
+        //3. Hacemos la petición
+        Response response = request.post(RestAssuredURL);
+        //4. Comprobamos que el servicio ha tenido exito
+        Assertions.assertEquals(400, response.getStatusCode());
+        ResponseBody body = response.getBody();
+        Assertions.assertTrue(body.asString().contains("Email o contraseña incorrectos"));
+    }
+
+    /**
+     * Inicio de sesión con datos inválidos (campo email o contraseña vacíos).
+     */
+    @Test
+    @Order( 40 )
+    public void P40() {
+        final String RestAssuredURL = URL + "/api/users/login";
+        //2. Preparamos el parámetro en formato JSON
+        RequestSpecification request = RestAssured.given();
+        JSONObject requestParams = new JSONObject();
+        requestParams.put("email", "");
+        requestParams.put("password", "");
+        request.header("Content-Type", "application/json");
+        request.body(requestParams.toJSONString());
+        //3. Hacemos la petición
+        Response response = request.post(RestAssuredURL);
+        //4. Comprobamos que el servicio ha tenido exito
+        Assertions.assertEquals(400, response.getStatusCode());
+        ResponseBody body = response.getBody();
+        Assertions.assertTrue(body.asString().contains("Falta email o contraseña"));
     }
 }
