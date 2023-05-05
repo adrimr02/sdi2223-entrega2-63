@@ -234,10 +234,69 @@ class Sdi2223Entrega2TestApplicationTests {
         SeleniumUtils.textIsNotPresentOnPage( driver, "Cerrar sesión");
     }
 
+    /*
+     + ###################
+     * Pruebas de crear ofertas
+     * ###################
+     */
+
+    /**
+     * Ir al formulario de alta de oferta, rellenarla con datos válidos y pulsar el botón Submit.
+     * Comprobar que la oferta sale en el listado de ofertas de dicho usuario.
+     */
+    @Test
+    @Order( 17 )
+    void P17() {
+        // Nos logueamos
+        PO_UserPrivateView.loginToPrivateView( driver, "user01@email.com", "user01" );
+
+        // Vamos a la pagina de crear oferta
+        PO_UserPrivateView.navigateToNewOfferForm(driver);
+
+        // Rellenamos el formulario de oferta
+        String checkText = "Coche";
+        PO_UserPrivateView.fillFormAddOffer(driver, checkText, "7800", "Un buen coche con pocos " +
+                "kilometros", false);
+
+        // Comprobamos que la oferta aparece en la lista
+        List<WebElement> elements = PO_View.checkElementBy(driver, "text", checkText);
+        Assertions.assertEquals(checkText, elements.get(0).getText());
+
+        //Ahora nos desconectamos y comprobamos que aparece el menú de iniciar sesion
+        PO_UserPrivateView.logout( driver );
+
+    }
+
+    /**
+     * Ir al formulario de alta de oferta, rellenarla con datos inválidos (campo título vacío y precio
+     * en negativo) y pulsar el botón Submit. Comprobar que se muestra el mensaje de campo inválido.
+     */
+    @Test
+    @Order( 18 )
+    void P18() {
+        // Nos logueamos
+        PO_UserPrivateView.loginToPrivateView( driver, "user01@email.com", "user01" );
+
+        // Vamos a la pagina de crear oferta
+        PO_UserPrivateView.navigateToNewOfferForm(driver);
+        // Rellenamos el formulario de oferta
+        PO_UserPrivateView.fillFormAddOffer(driver, "", "-2100", "Un buen coche con pocos " +
+                "kilometros", false);
+
+        // Seguimos en la pagina de crear oferta
+        List<WebElement> result = PO_UserPrivateView.checkElementBy(driver, "text", "Crear Oferta");
+        Assertions.assertEquals("Crear Oferta" , result.get(0).getText());
+
+        // Aparecen los errores
+        result = PO_UserPrivateView.checkElementBy(driver, "text", "Debes incluir, al menos, el título y el precio.");
+        Assertions.assertEquals(1, result.size());
+
+    }
+
     /* Ejemplos de pruebas de llamada a una API-REST */
     /* ---- Probamos a obtener lista de canciones sin token ---- */
     @Test
-    @Order(11)
+    @Order(37)
     public void PR11() {
         final String RestAssuredURL = "http://localhost:8081/api/v1.0/songs";
         Response response = RestAssured.get(RestAssuredURL);

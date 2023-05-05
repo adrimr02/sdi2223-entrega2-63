@@ -68,6 +68,10 @@ module.exports = function(app, offerRepo, userRepo) {
     if (offer.title.length > 30) {
       errors.push('El título debe tener menos de 30 caracteres.')
     }
+
+    if (offer.description.length > 300) {
+      errors.push('La descripción debe tener menos de 300 caracteres.')
+    }
     
     const { _id, wallet } = await userRepo.findUser({ email: req.session.user })
     if (wallet < 20) {
@@ -217,7 +221,6 @@ function getPages(total, currentPage, pageSize = 8) {
   for (let i = currentPage - 2; i <= currentPage + 2; i++)
     if (i > 0 && i <= lastPage)
       pages.push(i)
-
   return pages
 }
 

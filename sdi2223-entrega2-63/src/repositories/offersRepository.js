@@ -54,10 +54,10 @@ module.exports = class {
       const client = await this.mongoClient.connect(this.app.get('mongouri'))
       const database = client.db('mywallapop')
       const offersCollection = database.collection(this.collectionName)
-      const offers = await offersCollection.find(filter, options).skip((page - 1) * limit).limit
-      (limit).toArray()
-      const totalOfferCount = await offersCollection.countDocuments()
-      return { offers, total: totalOfferCount }
+      const offers = offersCollection.find(filter, options)
+      const totalOfferCount = await offers.count()
+      return { offers: await offers.skip((page - 1) * limit).limit
+        (limit).toArray(), total: totalOfferCount }
     } catch(error) {
       throw error
     }
