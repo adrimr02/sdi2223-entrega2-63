@@ -137,6 +137,10 @@ module.exports = function(app, offerRepo, userRepo) {
         res.redirect('/offers/my-offers?message=Esa oferta no es tuya. No puedes eliminarla.&messageType=alert-danger')
         return
       }
+      if (!offer.available) {
+        res.redirect('/offers/my-offers?message=Esta oferta ya fue vendida. No puedes eliminarla.&messageType=alert-danger')
+        return
+      }
 
       const result = await offerRepo.deleteOffer(req.params.id)
       if (result === null || result.deletedCount === 0) {

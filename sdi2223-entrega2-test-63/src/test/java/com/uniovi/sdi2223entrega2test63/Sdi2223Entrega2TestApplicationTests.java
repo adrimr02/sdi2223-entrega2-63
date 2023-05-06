@@ -329,6 +329,91 @@ class Sdi2223Entrega2TestApplicationTests {
         }
 
     }
+    
+    /*
+     + ###################
+     * Pruebas de eliminar ofertas
+     * ###################
+     */
+
+    /**
+     * Ir a la lista de ofertas, borrar la primera oferta de la lista, comprobar que la lista se actualiza
+     * y que la oferta desaparece.
+     */
+    @Test
+    @Order( 19 )
+    void P19() {
+        // Nos logueamos
+        PO_UserPrivateView.loginToPrivateView( driver, "user02@email.com", "user02" );
+
+        // Vamos a la lista de ofertas del usuario
+        PO_UserPrivateView.navigateToMyOffers(driver);
+
+        // Guardamos el título de la primera oferta de la lista
+        List<WebElement> elements = PO_View.checkElementBy(driver, "free", "//table/tbody/tr[1]/td[1]");
+        String title = elements.get(0).getText();
+
+        // Hacemos click en eliminar la primera
+        elements = PO_UserPrivateView.checkElementBy(driver, "free", "//table/tbody/tr[1]/td[7]/a");
+        elements.get(0).click();
+
+        // Comprobamos que ya no podemos encontrar el titulo de la oferta en la página
+        SeleniumUtils.textIsNotPresentOnPage( driver, title );
+    }
+
+    /**
+     * Inicia sesión, entra al listado de ofertas publicadas por el usuario,
+     * borra la ultima y comprueba que ya no aparece.
+     */
+    @Test
+    @Order( 20 )
+    void P20() {
+        // Nos logueamos
+        PO_UserPrivateView.loginToPrivateView( driver, "user02@email.com", "user02" );
+
+        // Vamos a la lista de ofertas del usuario
+        PO_UserPrivateView.navigateToMyOffers(driver);
+
+        // Guardamos el título de la ultima oferta de la lista
+        List<WebElement> elements = PO_View.checkElementBy(driver, "free", "//table/tbody/tr[last()]/td[1]");
+        String title = elements.get(0).getText();
+
+        // Hacemos click en eliminar la ultima
+        elements = PO_UserPrivateView.checkElementBy(driver, "free", "//table/tbody/tr[last()]/td[7]/a");
+        elements.get(0).click();
+
+        // Comprobamos que ya no podemos encontrar el titulo de la oferta en la página
+        SeleniumUtils.textIsNotPresentOnPage( driver, title );
+    }
+
+    /**
+     * Ir a la lista de ofertas, borrar una oferta propia que ha sido vendida, comprobar que la
+     * oferta no se borra.
+     */
+    @Test
+    @Order( 22 )
+    void P22() {
+        // Nos logueamos
+        PO_UserPrivateView.loginToPrivateView( driver, "user02@email.com",
+                "user02" );
+
+        // Vamos a la lista de ofertas del usuario
+        PO_UserPrivateView.navigateToMyOffers(driver);
+
+        // Guardamos la primera oferta que aparezca como vendida
+        WebElement offer = PO_View.checkElementBy(driver, "free",
+                "//table/tbody/tr[td[contains(text(), 'Vendida')]]").get(0);
+        String title = offer.findElement(By.xpath("td")).getText();
+
+        // Hacemos click en eliminar
+        By delete = By.xpath("td/a[contains(text(), 'Eliminar')]");
+        offer.findElement(delete).click();
+
+        // Comprobamos que el titulo esta presente y que aparece el mensaje de error
+        SeleniumUtils.textIsPresentOnPage( driver, title );
+        SeleniumUtils.textIsPresentOnPage( driver, "Esta oferta ya fue vendida. No puedes eliminarla." );
+
+    }
 
     /* Ejemplos de pruebas de llamada a una API-REST */
     /* ---- Probamos a obtener lista de canciones sin token ---- */

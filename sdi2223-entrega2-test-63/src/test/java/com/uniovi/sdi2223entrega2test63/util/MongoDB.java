@@ -140,7 +140,7 @@ public class MongoDB {
 				.append("description", "Cuadro abstracto pintado a mano")
 				.append("price", 300)
 				.append("date", LocalDate.now())
-				.append("seller", "user06@email.com")
+				.append("seller", "user04@email.com")
 				.append("available", true)
 				.append("featured", false);
 		offers.insertOne(offer7);
@@ -150,7 +150,7 @@ public class MongoDB {
 				.append("description", "Sillón orejero tapizado en tela de lino")
 				.append("price", 400)
 				.append("date", LocalDate.now())
-				.append("seller", "user07@email.com")
+				.append("seller", "user01@email.com")
 				.append("available", true)
 				.append("featured", false);
 		offers.insertOne(offer8);
@@ -160,7 +160,7 @@ public class MongoDB {
 				.append("description", "Juego de café de porcelana china")
 				.append("price", 50)
 				.append("date", LocalDate.now())
-				.append("seller", "user08@email.com")
+				.append("seller", "user03@email.com")
 				.append("available", true)
 				.append("featured", false);
 		offers.insertOne(offer9);
@@ -170,7 +170,7 @@ public class MongoDB {
 				.append("description", "Cama de matrimonio con cabecero de hierro forjado")
 				.append("price", 600)
 				.append("date", LocalDate.now())
-				.append("seller", "user09@email.com")
+				.append("seller", "user02@email.com")
 				.append("available", false)
 				.append("featured", false);
 		offers.insertOne(offer10);
@@ -180,8 +180,8 @@ public class MongoDB {
 				.append("description", "Cortina de seda estampada")
 				.append("price", 150)
 				.append("date", LocalDate.now())
-				.append("seller", "user10@email.com")
-				.append("available", true)
+				.append("seller", "user02@email.com")
+				.append("available", false)
 				.append("featured", false);
 		offers.insertOne(offer11);
 
@@ -190,7 +190,7 @@ public class MongoDB {
 				.append("description", "Jarrón de cristal de Murano")
 				.append("price", 250)
 				.append("date", LocalDate.now())
-				.append("seller", "user11@email.com")
+				.append("seller", "user01@email.com")
 				.append("available", true)
 				.append("featured", false);
 		offers.insertOne(offer12);
@@ -211,7 +211,7 @@ public class MongoDB {
 				.append("price", 150)
 				.append("date", LocalDate.now())
 				.append("seller", "user02@email.com")
-				.append("available", false)
+				.append("available", true)
 				.append("featured", true);
 		offers.insertOne(offer14);
 
