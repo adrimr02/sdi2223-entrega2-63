@@ -2,26 +2,25 @@
 ## Progreso
 * ### Aplicación Web:
   * Registrarse como usuario ✓
-    * Pruebas x
-    * Falta cumpleaños
+    * Pruebas ✓
   * Iniciar sesión ✓
-    * Pruebas
+    * Pruebas ✓
   * Cerrar sesión ✓
-    * Pruebas
+    * Pruebas ✓
   * Listado de usuarios x
     * Pruebas x
   * Borrado de usuarios x
     * Pruebas x
   * Dar de alta nueva oferta ✓
-    * Pruebas
+    * Pruebas ✓
   * Listado de ofertas propias ✓
-    * Pruebas
+    * Pruebas ✓
   * Dar de baja una oferta ✓
-    * Pruebas
+    * Pruebas ✓
   * Buscar ofertas ✓
-    * Pruebas x
+    * Pruebas ✓
   * Comprar oferta ✓
-    * Pruebas x
+    * Pruebas ✓
   * Listar ofertas compradas ✓
     * Pruebas x
   * Marcar oferta como destacada ✓
@@ -30,7 +29,7 @@
     * Pruebas x
 * ### RestApi:
   * Identificarse como usuario ✓
-    * Pruebas x
+    * Pruebas ✓
   * Listar ofertas disponibles x
     * Pruebas x
   * Enviar mensaje a una oferta x
