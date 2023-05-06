@@ -6,7 +6,7 @@
 	{% if featured is defined and not featured is empty %}
 	<h2>Ofertas destacadas</h2>
 	<div class="table-responsive">
-		<table class="table table-hover">
+		<table class="table table-hover" id="featured">
 			<thead>
 			<tr>
 				<th>Título</th>
@@ -54,7 +54,7 @@
     </div>
   </div>
 	<div class="table-responsive">
-		<table class="table table-hover">
+		<table class="table table-hover" id="offersList">
 			<thead>
 			<tr>
 				<th>Título</th>
@@ -73,14 +73,17 @@
 					<td>{{ offer.date }}</td>
 					<td>{{ offer.price }} €</td>
 					<td>
-          {% if offer.available %}
+          			{% if offer.available %}
 						<a href="/offers/buy/{{ offer._id }}">Comprar</a><br>
-          {% else %}
-            Vendido
-          {% endif %}
+         			 {% else %}
+						Vendido
+					  {% endif %}
 					</td>
 				</tr>
 			{% endfor %}
+			{% if offers is empty %}
+				<tr><td>No hay ofertas</td></tr>
+			{% endif %}
 			</tbody>
 		</table>
 	</div>

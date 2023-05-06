@@ -331,7 +331,7 @@ class Sdi2223Entrega2TestApplicationTests {
     }
     
     /*
-     + ###################
+     * ###################
      * Pruebas de eliminar ofertas
      * ###################
      */
@@ -413,6 +413,200 @@ class Sdi2223Entrega2TestApplicationTests {
         SeleniumUtils.textIsPresentOnPage( driver, title );
         SeleniumUtils.textIsPresentOnPage( driver, "Esta oferta ya fue vendida. No puedes eliminarla." );
 
+    }
+
+    /*
+     + ###################
+     * Pruebas de buscar ofertas
+     * ###################
+     */
+
+    /**
+     * Hacer una búsqueda con el campo vacío y comprobar que se muestra la página que
+     * corresponde con el listado de las ofertas existentes en el sistema.
+     */
+    @Test
+    @Order( 23 )
+    void P23() {
+        // Nos logueamos
+        PO_UserPrivateView.loginToPrivateView( driver, "user01@email.com",
+                "user01" );
+
+        // Vamos a la lista de buscar ofertas
+        PO_UserPrivateView.navigateToSearchOffers(driver);
+
+        // Comprobamos que aparecen las 5 ofertas que deben aparecer por página
+        List<WebElement> markList = SeleniumUtils.waitLoadElementsBy(driver,
+                "free", "//*[@id=\"offersList\"]/tbody/tr",
+                PO_View.getTimeout());
+        Assertions.assertEquals(5, markList.size());
+
+    }
+
+    /**
+     * Hacer una búsqueda escribiendo en el campo un texto que no exista y comprobar que se
+     * muestra la página que corresponde, con la lista de ofertas vacía.
+     */
+    @Test
+    @Order( 24 )
+    void P24() {
+        // Nos logueamos
+        PO_UserPrivateView.loginToPrivateView( driver, "user01@email.com",
+                "user01" );
+
+        // Vamos a la lista de buscar ofertas
+        PO_UserPrivateView.navigateToSearchOffers(driver);
+        WebElement searchField = driver.findElement( By.name("search"));
+        searchField.click();
+        searchField.clear();
+        searchField.sendKeys("asdfasd");
+        By search = By.className("btn");
+        driver.findElement(search).click();
+
+        // Comprobamos que aparece el mensaje de lista vacia
+        SeleniumUtils.textIsPresentOnPage(driver, "No hay ofertas");
+    }
+
+    /**
+     * Hacer una búsqueda escribiendo en el campo un texto en minúscula o mayúscula y
+     * comprobar que se muestra la página que corresponde, con la lista de ofertas que contengan dicho
+     * texto, independientemente que el título esté almacenado en minúsculas o mayúscula.
+     */
+    @Test
+    @Order( 25 )
+    void P25() {
+        // Nos logueamos
+        PO_UserPrivateView.loginToPrivateView( driver, "user01@email.com",
+                "user01" );
+
+        // Vamos a la lista de buscar ofertas
+        PO_UserPrivateView.navigateToSearchOffers(driver);
+        WebElement searchField = driver.findElement( By.name("search"));
+        searchField.click();
+        searchField.clear();
+        searchField.sendKeys("ALF");
+        By search = By.className("btn");
+        driver.findElement(search).click();
+
+        // Comprobamos que aparecen las 5 ofertas que deben aparecer por página
+        List<WebElement> markList = SeleniumUtils.waitLoadElementsBy(driver,
+                "free", "//*[@id=\"offersList\"]/tbody/tr",
+                PO_View.getTimeout());
+        Assertions.assertEquals(2, markList.size());
+    }
+
+    /*
+     + ###################
+     * Pruebas de comprar ofertas
+     * ###################
+     */
+
+    /**
+     * Sobre una búsqueda determinada (a elección de desarrollador), comprar una oferta que
+     * deja un saldo positivo en el contador del comprobador. Y comprobar que el contador se actualiza
+     * correctamente en la vista del comprador
+     */
+    @Test
+    @Order( 26 )
+    void P26() {
+        // Nos logueamos con un usuario que tiene 100€ en su cartera
+        PO_UserPrivateView.loginToPrivateView( driver, "user01@email.com",
+                "user01" );
+
+        // Vamos a la lista de buscar ofertas
+        PO_UserPrivateView.navigateToSearchOffers(driver);
+        WebElement searchField = driver.findElement( By.name("search"));
+        searchField.click();
+        searchField.clear();
+        searchField.sendKeys("café"); // Cuesta 50€
+        By search = By.className("btn");
+        driver.findElement(search).click();
+
+        // Guardamos el dinero del usuario antes de comprar
+        double initialMoney = PO_UserPrivateView.getCurrentUserWallet(driver);
+
+        // Hacemos click en comprar
+        double price = Double.parseDouble(PO_UserPrivateView
+                .checkElementBy(driver, "free", "//*[@id=\"offersList\"]/tbody/tr/td[4]").get(0)
+                .getText().replaceAll("[^0-9.]", ""));
+
+        List<WebElement> result = PO_UserPrivateView.checkElementBy(driver, "free",
+                "//*[@id=\"offersList\"]/tbody/tr/td[5]/a" );
+        result.get( 0 ).click();
+
+        // Comprobamos que se ha restado el dinero de la cartera del usuario
+        Assertions.assertEquals(initialMoney - price,
+                PO_UserPrivateView.getCurrentUserWallet( driver ));
+
+        SeleniumUtils.textIsPresentOnPage(driver, "Oferta comprada");
+    }
+
+    /**
+     * Sobre una búsqueda determinada (a elección de desarrollador), comprar una oferta que
+     * deja un saldo 0 en el contador del comprobador. Y comprobar que el contador se actualiza
+     * correctamente en la vista del comprador.
+     */
+    @Test
+    @Order( 27 )
+    void P27() {
+        // Nos logueamos con un usuario que tiene 100€ en su cartera
+        PO_UserPrivateView.loginToPrivateView( driver, "user03@email.com",
+                "user03" );
+
+        // Vamos a la lista de buscar ofertas
+        PO_UserPrivateView.navigateToSearchOffers(driver);
+        WebElement searchField = driver.findElement( By.name("search"));
+        searchField.click();
+        searchField.clear();
+        searchField.sendKeys("Espejo"); // Cuesta 100€
+        By search = By.className("btn");
+        driver.findElement(search).click();
+
+        // Click en comprar
+        List<WebElement> result = PO_UserPrivateView.checkElementBy(driver, "free",
+                "//*[@id=\"offersList\"]/tbody/tr/td[5]/a" );
+        result.get( 0 ).click();
+
+        // Comprobamos que se ha restado el dinero de la cartera del usuario
+        Assertions.assertEquals(0,
+                PO_UserPrivateView.getCurrentUserWallet( driver ));
+
+        SeleniumUtils.textIsPresentOnPage(driver, "Oferta comprada");
+    }
+
+    /**
+     * Sobre una búsqueda determinada (a elección de desarrollador), intentar comprar una oferta
+     * que esté por encima de saldo disponible del comprador. Y comprobar que se muestra el mensaje
+     * de saldo no suficiente.
+     */
+    @Test
+    @Order( 28 )
+    void P28() {
+        // Nos logueamos con un usuario que tiene 100€ en su cartera
+        PO_UserPrivateView.loginToPrivateView( driver, "user01@email.com",
+                "user01" );
+
+        // Vamos a la lista de buscar ofertas
+        PO_UserPrivateView.navigateToSearchOffers(driver);
+        WebElement searchField = driver.findElement( By.name("search"));
+        searchField.click();
+        searchField.clear();
+        searchField.sendKeys("persa"); // Cuesta 50€
+        By search = By.className("btn");
+        driver.findElement(search).click();
+
+        // Guardamos el dinero del usuario antes de comprar
+        double initialMoney = PO_UserPrivateView.getCurrentUserWallet(driver);
+
+        List<WebElement> result = PO_UserPrivateView.checkElementBy(driver, "free",
+                "//*[@id=\"offersList\"]/tbody/tr/td[5]/a" );
+        result.get( 0 ).click();
+
+        // Comprobamos que no ha cambiado el dinero de la cartera del usuario
+        Assertions.assertEquals(initialMoney,
+                PO_UserPrivateView.getCurrentUserWallet( driver ));
+
+        SeleniumUtils.textIsPresentOnPage(driver, "No tienes suficiente dinero.");
     }
 
     /* Ejemplos de pruebas de llamada a una API-REST */

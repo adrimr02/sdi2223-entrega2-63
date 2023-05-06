@@ -19,7 +19,6 @@ module.exports = function(app, offerRepo, userRepo) {
     const { offers, total: totalOfferCount } = await offerRepo.getOffersPage(filter, options, page, 5)
     const featured = await offerRepo.getOffers({ featured: true }, {})
     const pages = getPages(totalOfferCount, page, 5)
-    console.log(featured)
     res.render("shop.twig", {
       user: req.session.user,
       wallet: req.session.wallet,
@@ -77,7 +76,6 @@ module.exports = function(app, offerRepo, userRepo) {
     if (wallet < 20) {
       errors.push('No tienes suficiente dinero para destacar la oferta.')
     }
-    console.log(_id, wallet)
     if (errors.length === 0) {
       if (offer.featured) {
         await userRepo.updateUser(new ObjectId(_id), { $set: { wallet: wallet - 20 } })

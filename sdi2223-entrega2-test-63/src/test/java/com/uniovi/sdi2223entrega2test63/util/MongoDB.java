@@ -268,7 +268,7 @@ public class MongoDB {
 		Document offer20 = new Document()
 				.append("title","Espejo")
 				.append("description", "Espejo con marco dorado")
-				.append("price", 120)
+				.append("price", 100)
 				.append("date", LocalDate.now())
 				.append("seller", "user05@email.com")
 				.append("available", true)

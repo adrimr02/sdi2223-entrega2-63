@@ -16,11 +16,11 @@
   * Listado de ofertas propias ✓
     * Pruebas ✓
   * Dar de baja una oferta ✓
-    * Pruebas
+    * Pruebas ✓
   * Buscar ofertas ✓
-    * Pruebas x
+    * Pruebas ✓
   * Comprar oferta ✓
-    * Pruebas x
+    * Pruebas ✓
   * Listar ofertas compradas ✓
     * Pruebas x
   * Marcar oferta como destacada ✓
