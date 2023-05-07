@@ -45,7 +45,7 @@
                 "<td>" + offers[i].price + "€" + "</td>" +
                 "<td>" + offers[i].seller + "</td>" +
                 "<td>" +
-                "<a onclick=offerMessage('" + offers[i]._id + "')>Escribir Mensaje</a><br>" +
+                "<a onclick=offerMessage('" + offers[i]._id+ "'" +",'" + offers[i].title+"'" + ")>Escribir Mensaje</a><br>" +
                 "</td>" +
                 "</tr>");
         }
@@ -53,9 +53,11 @@
 
     var converID;
     var offerID;
-    function offerMessage(id){
+    var offerTitle;
+    function offerMessage(id,title){
         console.log(id)
         offerID=id;
+        offerTitle=title;
         $.ajax({
             url:URLbase+"/new/conversation",
             type:"POST",
@@ -72,10 +74,10 @@
                 if(converID === null || converID === undefined){
                     $("#main-container").load("widget-newMessages.html");
                 }else{
-                    selectedConversationsId=converID;
+                    selectedConversationsId=response.conversations._id;
                     $("#main-container").load("widget-messages.html");
                 }
-                //console.log("Estoy printeando esto: " +conver)
+
 
             },
             error: function (error) {

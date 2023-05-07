@@ -72,6 +72,7 @@ module.exports = function (app, conversationRepository, messageRepository) {
         conversationRepository.insertConversation( {
             buyer: req.user,
             offer: new ObjectId(req.body.offer),
+            offerTitle: req.body.offerTitle,
             date: new Date()
         }).then(newConverId => {
             //Ahora insertamos el mensaje con la id de la nueva conversacion
