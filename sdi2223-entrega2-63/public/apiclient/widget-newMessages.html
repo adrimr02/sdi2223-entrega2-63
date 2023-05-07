@@ -1,0 +1,42 @@
+<div id="widget-newMessages" >
+  <h1>Entablar Conversacion</h1>
+
+
+  <div class="form-group">
+    <label class="control-label col-sm-2" for="newMsgNoConv">Nuevo Mensaje:</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="newMsgNoConv" name="newMsgNoConv" placeholder="Escriba su mensaje"/>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="button" id="btn-submit-newMsgNoConv" class="btn btn-primary">Enviar</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+
+  $("#btn-submit-newMsgNoConv").click(function () {
+    $.ajax({
+      url: URLbase + "/new/conversation/message",
+      type: "POST",
+      data: {
+        offer: offerID,
+        content: $('#newMsgNoConv').val()
+      },
+      dataType: 'json',
+      headers: {"token": token},
+      success: function (response) {
+        console.log("LLevame a dnd quiero")
+        $("#main-container").load("widget-chats.html");
+
+      },
+      error: function (error) {
+        $("#main-container").load("widget-offers.html");
+      }
+    });
+  })
+
+</script>

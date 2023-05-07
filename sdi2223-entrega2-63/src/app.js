@@ -71,7 +71,8 @@ function startup() {
   app.use('/logs', adminSessionRouter)
   app.use('/api/offers', userTokenRouter)
   app.use('/api/conversations',userTokenRouter)
-
+  app.use('/api/new',userTokenRouter)
+  app.use('/api/conversations/*',userTokenRouter)
 
   // Set static files
   app.use(express.static(path.join(__dirname, '../public')))

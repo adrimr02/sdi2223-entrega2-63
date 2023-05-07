@@ -44,9 +44,45 @@
                 "<td>" + offers[i].date + "</td>" +
                 "<td>" + offers[i].price + "€" + "</td>" +
                 "<td>" + offers[i].seller + "</td>" +
+                "<td>" +
+                "<a onclick=offerMessage('" + offers[i]._id + "')>Escribir Mensaje</a><br>" +
                 "</td>" +
                 "</tr>");
         }
     }
+
+    var converID;
+    var offerID;
+    function offerMessage(id){
+        console.log(id)
+        offerID=id;
+        $.ajax({
+            url:URLbase+"/new/conversation",
+            type:"POST",
+            data:{
+               id: id
+            },
+            dataType:'json',
+            headers: {
+                "token": token
+            },
+            success: function(response){
+                converID = response.conversations
+
+                if(converID === null || converID === undefined){
+                    $("#main-container").load("widget-newMessages.html");
+                }else{
+                    selectedConversationsId=converID;
+                    $("#main-container").load("widget-messages.html");
+                }
+                //console.log("Estoy printeando esto: " +conver)
+
+            },
+            error: function (error) {
+                $("#main-container").load("widget-chats.html");
+            }
+        });
+    }
+
     loadOffers();
 </script>

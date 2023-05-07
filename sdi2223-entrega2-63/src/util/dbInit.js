@@ -13,7 +13,6 @@ module.exports = async function(app, mongoClient, usersRepo, offersRepo, logsRep
   await dropDatabase(app, mongoClient)
   await addUsers(usersRepo)
   await addOffers(offersRepo)
-  await addConversations(conversationRepo, messageRepo)
 }
 
 /**
@@ -284,65 +283,3 @@ async function addOffers(offersRepo)
 
 }
 
-async function addConversations(conversationsRepo, messageRepo)
-{
-  await conversationsRepo.insertConversation( {
-    buyer: "user02@email.com",
-    offer: "Mesa",
-    seller:"user01@email.com",
-    date: new Date()
-  })
-
-  await conversationsRepo.insertConversation( {
-    buyer: "user03@email.com",
-    offer: "Silla",
-    seller:"user01@email.com",
-    date: new Date()
-  })
-
-  await conversationsRepo.insertConversation( {
-    buyer: "user03@email.com",
-    offer: "Sofa",
-    seller:"user02@email.com",
-    date: new Date()
-  })
-
-  await conversationsRepo.insertConversation( {
-    buyer: "user01@email.com",
-    offer: "Sofa",
-    seller:"user02@email.com",
-    date: new Date()
-  })
-
-  await messageRepo.insertMessage({
-    buyer: "user01@email.com",
-    offer: "Sofa",
-    seller:"user02@email.com",
-    writer:"user01@email.com",
-    content:"Hola que tal?",
-    date: new Date(),
-    read: true
-
-  })
-
-  await messageRepo.insertMessage({
-    buyer: "user01@email.com",
-    offer: "Sofa",
-    seller:"user02@email.com",
-    writer:"user02@email.com",
-    content:"Muy bien, y tu?",
-    date: new Date(),
-    read: true
-  })
-
-  await messageRepo.insertMessage({
-    buyer: "user03@email.com",
-    offer: "Silla",
-    seller:"user01@email.com",
-    writer:"user03@email.com",
-    content:"Buenas, estaba intersado en esta silla",
-    date: new Date(),
-    read: true
-  })
-
-}
