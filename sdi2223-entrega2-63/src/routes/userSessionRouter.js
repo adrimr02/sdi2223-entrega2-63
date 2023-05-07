@@ -6,7 +6,7 @@ userSessionRouter.use(function (req, res, next) {
       next()
     }
     else
-      res.redirect('/users')
+      res.redirect('/users?message=No tiene permitido el acceso a esa parte de la web&messageType=alert-danger')
   else
     res.redirect('/login')
 })
