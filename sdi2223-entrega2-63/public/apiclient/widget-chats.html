@@ -63,7 +63,7 @@
             headers: {"token": token},
             success: function (response) {
                 console.log("Conversacion eliminada: " + _id);
-                $("#" + _id).remove(); // eliminar el <tr> de la canción
+                $("#" + _id).remove();
             },
             error: function (error) {
                 $("#main-container").load("widget-login.html");

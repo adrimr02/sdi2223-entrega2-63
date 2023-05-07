@@ -24,8 +24,8 @@ class
 Sdi2223Entrega2TestApplicationTests {
     static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
 
-    //static String Geckodriver= "C:\\Users\\Daniel Alonso\\Desktop\\PL-SDI-Sesión5-material\\geckodriver-v0.30.0-win64.exe";
-    static String Geckodriver = "E:\\ADRIAN\\Uniovi\\Curso 3\\SDI\\drivers\\geckodriver.exe";
+    static String Geckodriver= "C:\\Users\\Daniel Alonso\\Desktop\\test\\PL-SDI-Sesion5-material\\geckodriver-v0.30.0-win64.exe";
+    //static String Geckodriver = "E:\\ADRIAN\\Uniovi\\Curso 3\\SDI\\drivers\\geckodriver.exe";
     //static String Geckodriver = "C:\\Users\\larry\\Desktop\\UNI\\SDI\\PL-SDI-Sesio╠ün5-material\\geckodriver-v0.30.0-win64.exe";
 
 
@@ -1195,7 +1195,7 @@ Sdi2223Entrega2TestApplicationTests {
         Response response1 = request1.post(RestAssuredURL1);
         String token = response1.jsonPath().getString("data.token");
 
-        //1. Comprobamos que tan solo tenga dos conversaciones  (S5)
+        //2. Comprobamos que tan solo tenga dos conversaciones  (S5)
         final String RestAssuredURL2 = URL + "/api/conversations";
         RequestSpecification request2 = RestAssured.given();
         request2.header("Content-Type", "application/json");
@@ -1204,6 +1204,70 @@ Sdi2223Entrega2TestApplicationTests {
         Assertions.assertEquals(200, response2.getStatusCode());
         int nConver = response2.getBody().jsonPath().getList("conversations").size();
         Assertions.assertEquals(2, nConver);
+
+    }
+
+    @Test
+    @Order(46)
+    void P46() {
+        MongoDB m = new MongoDB();
+        m.resetMongo();
+        //Inicialmente en el setUp de la base de datos se crean 3 conversaciones, como se puede ver, tan solo en 2 de estas participa el user01
+        //1. Nos registramos exitosamente  (S1)
+
+        final String RestAssuredURL1 = URL + "/api/users/login";
+        RequestSpecification request1 = RestAssured.given();
+        JSONObject requestParams1 = new JSONObject();
+        requestParams1.put("email", "user01@email.com");
+        requestParams1.put("password", "user01");
+        request1.header("Content-Type", "application/json");
+        request1.body(requestParams1.toJSONString());
+        Response response1 = request1.post(RestAssuredURL1);
+        String token = response1.jsonPath().getString("data.token");
+
+        //2. Escribimos un nuevo mensaje a una oferta (S3) para conseguir un ID valido de manera sencilla
+        final String RestAssuredURL2 = URL + "/api/new/conversation/message";
+        RequestSpecification request2 = RestAssured.given();
+        JSONObject requestParams2 = new JSONObject();
+        requestParams2.put("offerID", "IDfalso");
+        requestParams2.put("offerTitle", "Titulo");
+        requestParams2.put("offerSeller", "user06@email.com");
+        requestParams2.put("content", "Hola");
+        request2.header("Content-Type", "application/json");
+        request2.header("token", token);
+        request2.body(requestParams2.toJSONString());
+        Response response2 = request2.post(RestAssuredURL2);
+        String idConver = response2.getBody().jsonPath().getString("messages.conversation");
+
+        //3. Comprobamos que haya 3 conversaciones (S5)
+        final String RestAssuredURL3 = URL + "/api/conversations";
+        RequestSpecification request3 = RestAssured.given();
+        request3.header("Content-Type", "application/json");
+        request3.header("token", token);
+        Response response3 = request3.post(RestAssuredURL3);
+        Assertions.assertEquals(200, response3.getStatusCode());
+        int nConver = response3.getBody().jsonPath().getList("conversations").size();
+        Assertions.assertEquals(3, nConver);
+
+
+        //4. Eliminamos la ultima conversacion creada quedandonos solo con las dos iniciales (S6)
+        final String RestAssuredURL4 = URL + "/api/conversations/" + idConver;
+        RequestSpecification request4 = RestAssured.given();
+        request4.header("Content-Type", "application/json");
+        request4.header("token", token);
+        Response response4 = request4.delete(RestAssuredURL4);
+
+        //5. Comprobamos que solo haya 2 conversaciones (S5)
+        final String RestAssuredURL5 = URL + "/api/conversations";
+        RequestSpecification request5 = RestAssured.given();
+        request5.header("Content-Type", "application/json");
+        request5.header("token", token);
+        Response response5 = request5.post(RestAssuredURL5);
+        Assertions.assertEquals(200, response5.getStatusCode());
+        int nConver2 = response5.getBody().jsonPath().getList("conversations").size();
+        System.out.println(response5.getBody().jsonPath().getList("conversations").toString());
+        Assertions.assertEquals(2, nConver2);
+
 
     }
 
@@ -1340,6 +1404,64 @@ Sdi2223Entrega2TestApplicationTests {
         Assertions.assertEquals(3,webElements.size());
     }
 
+
+    @Test
+    @Order(55)
+    void P55() {
+        MongoDB m = new MongoDB();
+        m.resetMongo(); //Partimos de la base de que el user01 tiene 2 conversaciones abiertas (cargadas de la base de datos de pruebas)
+
+        driver.navigate().to(URL+"/apiclient");
+        //Rellenamos el formulario
+        PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
+
+        //Entramos en mis conversaciones
+        String xpath = "/html/body/nav/div/div[2]/ul[1]/li[2]/a";
+        SeleniumUtils.waitLoadElementsByXpath(driver,xpath,PO_View.getTimeout());
+        List<WebElement> webElements = driver.findElements(By.xpath(xpath));
+        webElements.get(0).click();
+
+        //Hay dos conversaciones, y eliminamos la primera de estas
+        xpath = "/html/body/div[1]/div/table/tbody/tr[1]/td[3]/a[2]";
+        SeleniumUtils.waitLoadElementsByXpath(driver,xpath,PO_View.getTimeout());
+        webElements = driver.findElements(By.xpath(xpath));
+        webElements.get(0).click();
+
+        //Comprobamos que en "Mis Conversaciones" haya 1 conversacion en total
+        xpath = "/html/body/div[1]/div/table/tbody/tr";
+        SeleniumUtils.waitLoadElementsByXpath(driver,xpath,PO_View.getTimeout());
+        webElements = driver.findElements(By.xpath(xpath));
+        Assertions.assertEquals(1,webElements.size());
+    }
+
+    @Test
+    @Order(56)
+    void P56() {
+        MongoDB m = new MongoDB();
+        m.resetMongo(); //Partimos de la base de que el user01 tiene 2 conversaciones abiertas (cargadas de la base de datos de pruebas)
+
+        driver.navigate().to(URL+"/apiclient");
+        //Rellenamos el formulario
+        PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
+
+        //Entramos en mis conversaciones
+        String xpath = "/html/body/nav/div/div[2]/ul[1]/li[2]/a";
+        SeleniumUtils.waitLoadElementsByXpath(driver,xpath,PO_View.getTimeout());
+        List<WebElement> webElements = driver.findElements(By.xpath(xpath));
+        webElements.get(0).click();
+
+        //Hay dos conversaciones, y eliminamos la primera de estas
+        xpath = "/html/body/div[1]/div/table/tbody/tr[2]/td[3]/a[2]";
+        SeleniumUtils.waitLoadElementsByXpath(driver,xpath,PO_View.getTimeout());
+        webElements = driver.findElements(By.xpath(xpath));
+        webElements.get(0).click();
+
+        //Comprobamos que en "Mis Conversaciones" haya 1 conversacion en total
+        xpath = "/html/body/div[1]/div/table/tbody/tr";
+        SeleniumUtils.waitLoadElementsByXpath(driver,xpath,PO_View.getTimeout());
+        webElements = driver.findElements(By.xpath(xpath));
+        Assertions.assertEquals(1,webElements.size());
+    }
     /*
      + ###################
      * Pruebas de listado de ofertas en RestAPI

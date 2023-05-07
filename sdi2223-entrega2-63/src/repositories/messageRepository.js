@@ -33,4 +33,15 @@ module.exports = class {
             throw error
         }
     }
+
+    async deleteMessageByConversastion(idConversation) {
+        try {
+            const client = await this.mongoClient.connect(this.app.get('mongouri'))
+            const database = client.db('mywallapop')
+            const conversationsCollection = database.collection(this.collectionName)
+            return await conversationsCollection.deleteMany({ conversation: new ObjectId(idConversation) })
+        } catch (err) {
+            throw err
+        }
+    }
 }

@@ -45,7 +45,19 @@ module.exports = function (app, conversationRepository, messageRepository) {
         });
     })
 
+    app.delete('/api/conversations/:id', function (req, res) {
+        console.log("Eliminando conversacion")
 
+        messageRepository.deleteMessageByConversastion(new ObjectId(req.params.id)).then(message => {
+            conversationRepository.deleteConversation(new ObjectId(req.params.id)).then(conversation => {
+                res.status(200);
+                res.send({conversation: conversation})
+            }).catch(error => {
+                res.status(500);
+                res.json({error: "Se ha producido un error al recuperar las conversaciones."})
+            });
+        });
+    })
 
     app.post('/api/conversations', function (req, res) {
         console.log("Llegue")
@@ -114,6 +126,8 @@ module.exports = function (app, conversationRepository, messageRepository) {
                 "offer": new ObjectId(req.body.id)
             };
         let options = {};
+
+
         conv = conversationRepository.findTheConversation(filter, options).then(conversations => {
             console.log(conversations)
             res.status(200);
