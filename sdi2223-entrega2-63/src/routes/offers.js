@@ -197,10 +197,8 @@ module.exports = function(app, offerRepo, userRepo) {
       }
       const user = await userRepo.findUser({ email: req.session.user }, {})
       if (user.wallet < 20) {
-        if (!offer) {
-          res.redirect('/offers/my-offers?message=No tienes suficiente dinero.&messageType=alert-danger')
-          return
-        }
+        res.redirect('/offers/my-offers?message=No tienes suficiente dinero.&messageType=alert-danger')
+        return
       }
       await userRepo.updateUser(new ObjectId(user._id), { $set: {wallet: user.wallet - 20 } })
       req.session.wallet = user.wallet - 20
