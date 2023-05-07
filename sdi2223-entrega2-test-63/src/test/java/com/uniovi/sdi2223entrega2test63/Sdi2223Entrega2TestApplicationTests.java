@@ -746,7 +746,7 @@ class Sdi2223Entrega2TestApplicationTests {
     */
 
     /*
-     + ###################
+     * ###################
      * Pruebas de login RestAPI
      * ###################
      */
@@ -815,5 +815,56 @@ class Sdi2223Entrega2TestApplicationTests {
         Assertions.assertEquals(400, response.getStatusCode());
         ResponseBody body = response.getBody();
         Assertions.assertTrue(body.asString().contains("Falta email o contraseña"));
+    }
+
+    /*
+     * ###################
+     * Pruebas de login cliente JQuery
+     * ###################
+     */
+
+    /**
+     * Inicio de sesión con datos válidos
+     */
+    @Test
+    @Order(48)
+    void P48() {
+        //Vamos al formulario de logueo.
+        driver.navigate().to(URL+"/apiclient");
+        //Rellenamos el formulario
+        PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
+        //Comprobamos que entramos en la pagina privada del usuario
+        List<WebElement> result = PO_View.checkElementBy(driver, "text", "Ofertas disponibles");
+        Assertions.assertEquals("Ofertas disponibles", result.get(0).getText());
+    }
+
+    /**
+     * Inicio de sesión con datos inválidos (usuario estándar, email existente, pero contraseña
+     * incorrecta).
+     */
+    @Test
+    @Order(49)
+    void P49() throws InterruptedException {
+        //Vamos al formulario de logueo.
+        driver.navigate().to(URL+"/apiclient");
+        //Rellenamos el formulario
+        PO_LoginView.fillLoginForm(driver, "user01@email.com", "user02");
+        List<WebElement> result = PO_LoginView.checkElementBy(driver, "text", "Email o contraseña inválidos.");
+        Assertions.assertTrue(result.size() > 0);
+    }
+
+    /**
+     * Inicio de sesión con datos inválidos (campo email o contraseña vacíos)
+     */
+    @Test
+    @Order(50)
+    void P50() {
+        //Vamos al formulario de logueo.
+        driver.navigate().to(URL+"/apiclient");
+        //Pulsamos el botón para enviar el formulario sin haberlo rellenado
+        By boton = By.className("btn");
+        driver.findElement(boton).click();
+        List<WebElement> result = PO_LoginView.checkElementBy(driver, "text", "Email o contraseña inválidos.");
+        Assertions.assertTrue(result.size() > 0);
     }
 }

@@ -1,3 +1,4 @@
+<div id="errors"></div>
 <div id="widget-login">
   <div class="form-group">
     <label class="control-label col-sm-2" for="email">Email:</label>
@@ -15,7 +16,7 @@
   </div>
   <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
-      <button type="button" id="boton-login">Aceptar</button>
+      <button class="btn" type="button" id="boton-login">Aceptar</button>
     </div>
   </div>
 </div>
@@ -36,7 +37,13 @@
       },
       error: function(error) {
         Cookies.remove('token');
-        $('#widget-login').prepend('<div class="alert alert-danger">Usuario no encontrado</div>')
+        $('#errors').html(
+                '<div class="alert alert-danger alert-dismisible">' +
+                  '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                    '<span aria-hidden="true">&times;</span>' +
+                  '</button>' +
+                  'Email o contraseña inválidos.' +
+                '</div>')
       }
     })
   })
