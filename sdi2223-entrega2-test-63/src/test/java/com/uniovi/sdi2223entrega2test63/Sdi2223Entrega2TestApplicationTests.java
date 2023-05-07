@@ -1450,7 +1450,7 @@ Sdi2223Entrega2TestApplicationTests {
         List<WebElement> webElements = driver.findElements(By.xpath(xpath));
         webElements.get(0).click();
 
-        //Hay dos conversaciones, y eliminamos la primera de estas
+        //Hay dos conversaciones, y eliminamos la ultima de estas
         xpath = "/html/body/div[1]/div/table/tbody/tr[2]/td[3]/a[2]";
         SeleniumUtils.waitLoadElementsByXpath(driver,xpath,PO_View.getTimeout());
         webElements = driver.findElements(By.xpath(xpath));
