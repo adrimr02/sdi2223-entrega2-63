@@ -41,13 +41,13 @@ module.exports = function(app, usersRepository, ofersReposiroty, logsRepository)
     })
   })
   
-  app.post('/users', (req,res) => {
+  app.post('/users/delete', (req,res) => {
     const errors = []
     if (typeof req.body.selectedUsers === 'string') {
       req.body.selectedUsers = [req.body.selectedUsers];
     }
     const selectedUsers = req.body.selectedUsers;
-    if(selectedUsers != undefined && selectedUsers.length > 0){
+    if(selectedUsers !== undefined && selectedUsers.length > 0){
       usersRepository.deleteUsers(selectedUsers).then (result => {
         ofersReposiroty.deleteOfferByAuthor(selectedUsers).then (result2 => {
           if (result === null || result2 === null || result.deletedCount === 0) {
