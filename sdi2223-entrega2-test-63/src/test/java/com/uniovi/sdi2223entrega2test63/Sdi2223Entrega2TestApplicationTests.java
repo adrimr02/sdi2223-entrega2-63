@@ -25,8 +25,8 @@ Sdi2223Entrega2TestApplicationTests {
     static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
 
     //static String Geckodriver= "C:\\Users\\Daniel Alonso\\Desktop\\PL-SDI-Sesión5-material\\geckodriver-v0.30.0-win64.exe";
-    static String Geckodriver = "E:\\ADRIAN\\Uniovi\\Curso 3\\SDI\\drivers\\geckodriver.exe";
-    //static String Geckodriver = "C:\\Users\\larry\\Desktop\\UNI\\SDI\\PL-SDI-Sesio╠ün5-material\\geckodriver-v0.30.0-win64.exe";
+    //static String Geckodriver = "E:\\ADRIAN\\Uniovi\\Curso 3\\SDI\\drivers\\geckodriver.exe";
+    static String Geckodriver = "C:\\Users\\larry\\Desktop\\UNI\\SDI\\PL-SDI-Sesio╠ün5-material\\geckodriver-v0.30.0-win64.exe";
 
 
     //static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
@@ -1350,32 +1350,34 @@ Sdi2223Entrega2TestApplicationTests {
      *  Mostrar el listado de ofertas para dicho usuario y comprobar que se muestran todas las que
      * existen para este usuario.
      */
-    /*@Test
+    @Test
     @Order( 41 )
     public void P41() {
         final String RestAssuredURL = URL + "/api/users/login";
         //2. Preparamos el parámetro en formato JSON
-        RequestSpecification request = RestAssured.given();
+        RequestSpecification request1 = RestAssured.given();
         JSONObject requestParams = new JSONObject();
         requestParams.put("email", "user01@email.com");
         requestParams.put("password", "user01");
-        request.header("Content-Type", "application/json");
-        request.body(requestParams.toJSONString());
+        request1.header("Content-Type", "application/json");
+        request1.body(requestParams.toJSONString());
         //3. Hacemos la petición
-        Response response = request.post(RestAssuredURL);
+        Response response1 = request1.post(RestAssuredURL);
         //4. Comprobamos que el servicio ha tenido exito
-        Assertions.assertEquals(200, response.getStatusCode());
-        ResponseBody body = response.getBody();
+        Assertions.assertEquals(200, response1.getStatusCode());
+        String token = response1.jsonPath().getString("data.token");
+
         //5. Accedemos a la url del listado de ofertas
-        final Sting RestAssuredURL2 = URL + "/api/offers";
-        requestParams = new JSONObject();
-        requestParams.put("token", body.token);
-        request.body(requestParams.toJSONString());
-        Response response = request.post(RestAssuredURL2);
+        final String RestAssuredURL2 = URL + "/api/offers";
+        RequestSpecification request2 = RestAssured.given();
+        request2.header("Content-Type", "application/json");
+        request2.header("token",token);
+        Response response2 = request2.get(RestAssuredURL2);
         //6. Comprobamos que el servicio ha tenido exito
-        Assertions.assertEquals(200, response.getStatusCode());
-        ResponseBody body = response.getBody();
-    }*/
+        Assertions.assertEquals(200, response2.getStatusCode());
+        int offers = response2.getBody().jsonPath().getList("offers").size();
+        Assertions.assertEquals(11,offers);
+    }
 
      /*
      * ###################
@@ -1413,15 +1415,18 @@ Sdi2223Entrega2TestApplicationTests {
      *  Mostrar el listado de ofertas disponibles y comprobar que se muestran todas las que existen,
      * menos las del usuario identificado
      */
-    /*@Test
+    @Test
     @Order( 51 )
     public void P51() {
-        //Accedemos al cliente JQ
-        PO_UserPrivateView.navigateToJQLogin( driver)
-        // Nos logueamos
-        PO_UserPrivateView.loginToJQPrivateView( driver, "user01@email.com", "user01" );
-
-
-    }*/
+        //Vamos al formulario de logueo.
+        driver.navigate().to(URL+"/apiclient/index.html");
+        //Rellenamos el formulario
+        PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
+        //Comprobamos que se muestran todas las ofertas
+        List<WebElement> offersList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout());
+        int expectedOffers=11;
+        Assertions.assertEquals(expectedOffers, offersList.size());
+    }
 
 }
