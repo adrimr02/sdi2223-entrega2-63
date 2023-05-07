@@ -25,15 +25,11 @@
             dataType:'json',
             headers: {"token": token},
             success: function(response){
-                if (Cookies.get('token') != null ) {
-                    conversations = response.conversations;
-                    updateConversations(conversations);
-                }else{
-                    $( "#main-container" ).load("widget-login.html");
-                }
+                conversations = response.conversations;
+                updateConversations(conversations);
             },
             error: function (error) {
-                $("#main-container").load("widget-chats.html");
+                $( "#main-container" ).load("widget-login.html");
             }
         });
     }
@@ -44,7 +40,7 @@
             $("#conversationsTableBody").append(
                 "<tr id=" + conversations[i]._id + ">" +
                 "<td>" + conversations[i].buyer + "</td>" +
-                "<td>" + conversations[i].offer + "</td>" +
+                "<td>" + conversations[i].offerTitle + "</td>" +
                 "<td>" +
                 "<a onclick=conversationsDetails('" + conversations[i]._id + "')>Mensajes</a><br>" +
                 "<a onclick=conversationsDelete('" + conversations[i]._id + "')>Eliminar</a>" +

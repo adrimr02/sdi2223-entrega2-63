@@ -38,15 +38,56 @@
         $("#offersTableBody").empty(); // Vaciar la tabla
         for (let offer of offers) {
             $("#offersTableBody").append(
-                "<tr id=" + offer._id + ">" +
-                "<td>" + offer.title + "</td>" +
-                "<td>" + offer.description + "</td>" +
-                "<td>" + offer.date + "</td>" +
-                "<td>" + offer.price + "€" + "</td>" +
-                "<td>" + offer.seller + "</td>" +
+                "<tr id=" + offers[i]._id + ">" +
+                "<td>" + offers[i].title + "</td>" +
+                "<td>" + offers[i].description + "</td>" +
+                "<td>" + offers[i].date + "</td>" +
+                "<td>" + offers[i].price + "€" + "</td>" +
+                "<td>" + offers[i].seller + "</td>" +
+                "<td>" +
+                "<a onclick=offerMessage('" + offers[i]._id+ "'" +",'" + offers[i].title+"','" + offers[i].seller+"'"+")>" +
+                "Escribir Mensaje</a><br>" +
                 "</td>" +
                 "</tr>");
         }
     }
+
+    var converID;
+    var offerID;
+    var offerTitle;
+    var offerSeller;
+    function offerMessage(id,title, seller){
+        console.log(id)
+        offerID=id;
+        offerTitle=title;
+        offerSeller= seller;
+        $.ajax({
+            url:URLbase+"/new/conversation",
+            type:"POST",
+            data:{
+               id: id
+            },
+            dataType:'json',
+            headers: {
+                "token": token
+            },
+            success: function(response){
+                converID = response.conversations
+
+                if(converID === null || converID === undefined){
+                    $("#main-container").load("widget-newMessages.html");
+                }else{
+                    selectedConversationsId=response.conversations._id;
+                    $("#main-container").load("widget-messages.html");
+                }
+
+
+            },
+            error: function (error) {
+                $("#main-container").load("widget-chats.html");
+            }
+        });
+    }
+
     loadOffers();
 </script>

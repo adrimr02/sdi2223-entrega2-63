@@ -8,22 +8,26 @@ import io.restassured.response.Response;
 import io.restassured.response.ResponseBody;
 import io.restassured.specification.RequestSpecification;
 import org.json.simple.JSONObject;
+import org.junit.Assert;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
+import java.sql.Driver;
 import java.util.ArrayList;
 import java.util.List;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class Sdi2223Entrega2TestApplicationTests {
+class
+Sdi2223Entrega2TestApplicationTests {
     static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
 
     //static String Geckodriver= "C:\\Users\\Daniel Alonso\\Desktop\\PL-SDI-Sesión5-material\\geckodriver-v0.30.0-win64.exe";
     static String Geckodriver = "E:\\ADRIAN\\Uniovi\\Curso 3\\SDI\\drivers\\geckodriver.exe";
     //static String Geckodriver = "C:\\Users\\larry\\Desktop\\UNI\\SDI\\PL-SDI-Sesio╠ün5-material\\geckodriver-v0.30.0-win64.exe";
+
 
     //static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
     //static String PathFirefox = "/Applications/Firefox.app/Contents/MacOS/firefox-bin";
@@ -1038,6 +1042,304 @@ class Sdi2223Entrega2TestApplicationTests {
         Assertions.assertTrue(body.asString().contains("Falta email o contraseña"));
     }
 
+    /**
+     * Enviar mensaje a una oferta.
+     */
+    @Test
+    @Order(42)
+    void P42() {
+
+        //1. Nos registramos exitosamente  (S1)
+        final String RestAssuredURL1 = URL + "/api/users/login";
+        RequestSpecification request1 = RestAssured.given();
+        JSONObject requestParams1 = new JSONObject();
+        requestParams1.put("email", "user01@email.com");
+        requestParams1.put("password", "user01");
+        request1.header("Content-Type", "application/json");
+        request1.body(requestParams1.toJSONString());
+        Response response1 = request1.post(RestAssuredURL1);
+        String token = response1.jsonPath().getString("data.token");
+
+
+        //2. Escribimos un nuevo mensaje a una oferta (S3)
+        final String RestAssuredURL2 = URL + "/api/new/conversation/message";
+        RequestSpecification request2 = RestAssured.given();
+        JSONObject requestParams2 = new JSONObject();
+        requestParams2.put("offerID", "IDfalso");
+        requestParams2.put("offerTitle", "Titulo");
+        requestParams2.put("offerSeller", "user02@email.com");
+        requestParams2.put("content", "Hola");
+        request2.header("Content-Type", "application/json");
+        request2.header("token", token);
+        request2.body(requestParams2.toJSONString());
+        Response response2 = request2.post(RestAssuredURL2);
+        String idConver = response2.getBody().jsonPath().getString("messages.conversation");
+
+
+        //3. Comprobamos que el mensaje se ha registrado y se muestra (S4)
+        final String RestAssuredURL3 = URL + "/api/conversations/" + idConver;
+        RequestSpecification request3 = RestAssured.given();
+        request3.header("Content-Type", "application/json");
+        request3.header("token", token);
+        Response response3 = request3.get(RestAssuredURL3);
+
+
+        Assertions.assertEquals(200, response3.getStatusCode());
+        ResponseBody body = response3.getBody();
+        Assertions.assertEquals("Hola",body.jsonPath().getList("messages.content").get(0));
+
+
+    }
+
+    @Test
+    @Order(43)
+    void P43() {
+        MongoDB m = new MongoDB();
+        m.resetMongo();
+        //1. Nos registramos exitosamente con un ususario sin conversaciones (S1)
+        final String RestAssuredURL1 = URL + "/api/users/login";
+        RequestSpecification request1 = RestAssured.given();
+        JSONObject requestParams1 = new JSONObject();
+        requestParams1.put("email", "user04@email.com");
+        requestParams1.put("password", "user04");
+        request1.header("Content-Type", "application/json");
+        request1.body(requestParams1.toJSONString());
+        Response response1 = request1.post(RestAssuredURL1);
+        String token = response1.jsonPath().getString("data.token");
+
+        //2. Escribimos un nuevo mensaje a una oferta nuestra (S3)
+        final String RestAssuredURL2 = URL + "/api/new/conversation/message";
+        RequestSpecification request2 = RestAssured.given();
+        JSONObject requestParams2 = new JSONObject();
+        requestParams2.put("offerID", "IDfalso");
+        requestParams2.put("offerTitle", "Titulo");
+        requestParams2.put("offerSeller", "user04@email.com");
+        requestParams2.put("content", "Hola");
+        request2.header("Content-Type", "application/json");
+        request2.header("token", token);
+        request2.body(requestParams2.toJSONString());
+        Response response2 = request2.post(RestAssuredURL2);
+
+        Assertions.assertEquals(400, response2.getStatusCode());
+
+        //3. Comprobamos que el mensaje no se ha registrado ni se ha creado la conversacion (S4)
+        final String RestAssuredURL3 = URL + "/api/conversations";
+        RequestSpecification request3 = RestAssured.given();
+        request3.header("Content-Type", "application/json");
+        request3.header("token", token);
+        Response response3 = request3.post(RestAssuredURL3);
+        Assertions.assertEquals(200, response3.getStatusCode());
+        int nConver = response3.getBody().jsonPath().getList("conversations").size();
+        Assertions.assertEquals(0, nConver);
+
+    }
+
+    @Test
+    @Order(44)
+    void P44() {
+        //1. Nos registramos exitosamente  (S1)
+        final String RestAssuredURL1 = URL + "/api/users/login";
+        RequestSpecification request1 = RestAssured.given();
+        JSONObject requestParams1 = new JSONObject();
+        requestParams1.put("email", "user01@email.com");
+        requestParams1.put("password", "user01");
+        request1.header("Content-Type", "application/json");
+        request1.body(requestParams1.toJSONString());
+        Response response1 = request1.post(RestAssuredURL1);
+        String token = response1.jsonPath().getString("data.token");
+
+
+        //2. Escribimos un nuevo mensaje a una oferta (S3)
+        final String RestAssuredURL2 = URL + "/api/new/conversation/message";
+        RequestSpecification request2 = RestAssured.given();
+        JSONObject requestParams2 = new JSONObject();
+        requestParams2.put("offerID", "IDfalso");
+        requestParams2.put("offerTitle", "Titulo");
+        requestParams2.put("offerSeller", "user02@email.com");
+        requestParams2.put("content", "Hola");
+        request2.header("Content-Type", "application/json");
+        request2.header("token", token);
+        request2.body(requestParams2.toJSONString());
+        Response response2 = request2.post(RestAssuredURL2);
+        String idConver = response2.getBody().jsonPath().getString("messages.conversation");
+
+        //3. Comprobamos que el mensaje se ha registrado (S4)
+        final String RestAssuredURL3 = URL + "/api/conversations/" + idConver;
+        RequestSpecification request3 = RestAssured.given();
+        request3.header("Content-Type", "application/json");
+        request3.header("token", token);
+        Response response3 = request3.get(RestAssuredURL3);
+
+        Assertions.assertEquals(200, response3.getStatusCode());
+        ResponseBody body = response3.getBody();
+        Assertions.assertEquals("Hola",body.jsonPath().getList("messages.content").get(0));
+
+
+
+    }
+
+    @Test
+    @Order(45)
+    void P45() {
+        MongoDB m = new MongoDB();
+        m.resetMongo();
+        //Inicialmente en el setUp se crean 3 conversaciones, como se puede ver, tan solo en 2 de estas participa el user01
+        //1. Nos registramos exitosamente  (S1)
+        final String RestAssuredURL1 = URL + "/api/users/login";
+        RequestSpecification request1 = RestAssured.given();
+        JSONObject requestParams1 = new JSONObject();
+        requestParams1.put("email", "user01@email.com");
+        requestParams1.put("password", "user01");
+        request1.header("Content-Type", "application/json");
+        request1.body(requestParams1.toJSONString());
+        Response response1 = request1.post(RestAssuredURL1);
+        String token = response1.jsonPath().getString("data.token");
+
+        //1. Comprobamos que tan solo tenga dos conversaciones  (S5)
+        final String RestAssuredURL2 = URL + "/api/conversations";
+        RequestSpecification request2 = RestAssured.given();
+        request2.header("Content-Type", "application/json");
+        request2.header("token", token);
+        Response response2 = request2.post(RestAssuredURL2);
+        Assertions.assertEquals(200, response2.getStatusCode());
+        int nConver = response2.getBody().jsonPath().getList("conversations").size();
+        Assertions.assertEquals(2, nConver);
+
+    }
+
+    @Test
+    @Order(48)
+    void P48() {
+        //Vamos al formulario de logueo.
+        driver.navigate().to(URL+"/apiclient");
+        //Rellenamos el formulario
+        PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
+        //Comprobamos que entramos en la pagina privada del usuario
+        List<WebElement> result = PO_View.checkElementBy(driver, "text", "Ofertas disponibles");
+        Assertions.assertEquals("Ofertas disponibles", result.get(0).getText());
+    }
+
+    /**
+     * Inicio de sesión con datos inválidos (usuario estándar, email existente, pero contraseña
+     * incorrecta).
+     */
+    @Test
+    @Order(49)
+    void P49() throws InterruptedException {
+        //Vamos al formulario de logueo.
+        driver.navigate().to(URL+"/apiclient");
+        //Rellenamos el formulario
+        PO_LoginView.fillLoginForm(driver, "user01@email.com", "user02");
+        List<WebElement> result = PO_LoginView.checkElementBy(driver, "text", "Email o contraseña inválidos.");
+        Assertions.assertTrue(result.size() > 0);
+    }
+
+
+    @Test
+    @Order(52)
+    void P52() {
+        MongoDB m = new MongoDB();
+        m.resetMongo();
+        //Vamos al formulario de logueo.
+        driver.navigate().to(URL+"/apiclient");
+        //Rellenamos el formulario
+        PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
+
+        //Eligimos una oferta con la que no hayamos entablado conversacion
+        String xpath = "/html/body/div[1]/div/table/tbody/tr[5]/td[6]/a";
+        SeleniumUtils.waitLoadElementsByXpath(driver,xpath,PO_View.getTimeout());
+        List<WebElement> webElements = driver.findElements(By.xpath(xpath));
+        webElements.get(0).click();
+
+        //Escribimos el mensaje
+        xpath = "/html/body/div[1]/div/h1";
+        SeleniumUtils.waitLoadElementsByXpath(driver,xpath,PO_View.getTimeout());
+        PO_FirstNewMessage.fillNewMessage(driver, "Nuevo mensaje");
+
+        //Comprobamos que esta en "Mis Conversaciones"
+        xpath = "/html/body/div[1]/div/table/tbody/tr/td[3]/a[1]";
+        SeleniumUtils.waitLoadElementsByXpath(driver,xpath,PO_View.getTimeout());
+        webElements = driver.findElements(By.xpath(xpath));
+        webElements.get(2).click();
+
+        //Comprobamos que esta en los mensajes de la conversacion
+        xpath = "/html/body/div[1]/div/table/tbody/tr/td[2]";
+        SeleniumUtils.waitLoadElementsByXpath(driver,xpath,PO_View.getTimeout());
+        webElements = driver.findElements(By.xpath(xpath));
+        Assertions.assertEquals("Nuevo mensaje", webElements.get(0).getText());
+
+
+    }
+
+    @Test
+    @Order(53)
+    void P53() {
+        MongoDB m = new MongoDB();
+        m.resetMongo();
+        //Vamos al formulario de logueo.
+        driver.navigate().to(URL+"/apiclient");
+        //Rellenamos el formulario
+        PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
+
+        //Eligimos una oferta con la que no hayamos entablado conversacion
+        String xpath = "/html/body/div[1]/div/table/tbody/tr[5]/td[6]/a";
+        SeleniumUtils.waitLoadElementsByXpath(driver,xpath,PO_View.getTimeout());
+        List<WebElement> webElements = driver.findElements(By.xpath(xpath));
+        webElements.get(0).click();
+
+        //Escribimos el mensaje
+        xpath = "/html/body/div[1]/div/h1";
+        SeleniumUtils.waitLoadElementsByXpath(driver,xpath,PO_View.getTimeout());
+        PO_FirstNewMessage.fillNewMessage(driver, "Nuevo mensaje");
+
+        //Comprobamos que esta en "Mis Conversaciones"
+        xpath = "/html/body/div[1]/div/table/tbody/tr/td[3]/a[1]";
+        SeleniumUtils.waitLoadElementsByXpath(driver,xpath,PO_View.getTimeout());
+        webElements = driver.findElements(By.xpath(xpath));
+        webElements.get(2).click();
+
+        //Escribimos un nuevo mensaje
+        xpath = "/html/body/div[1]/div/h2";
+        SeleniumUtils.waitLoadElementsByXpath(driver,xpath,PO_View.getTimeout());
+        PO_NewMessage.fillMessage(driver, "Segundo mensaje");
+
+        //Comprobamos que esta en los mensajes de la conversacion
+        xpath = "/html/body/div[1]/div/table/tbody/tr[2]/td[2]";
+        SeleniumUtils.waitLoadElementsByXpath(driver,xpath,PO_View.getTimeout());
+        webElements = driver.findElements(By.xpath(xpath));
+        Assertions.assertEquals("Segundo mensaje", webElements.get(0).getText());
+
+
+    }
+
+    @Test
+    @Order(54)
+    void P54() {
+        MongoDB m = new MongoDB();
+        m.resetMongo(); //Partimos de la base de que el user01 tiene dos conversaciones abiertas (cargadas de la base de datos de pruebas)
+
+        driver.navigate().to(URL+"/apiclient");
+        //Rellenamos el formulario
+        PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
+
+        //Eligimos una oferta con la que no hayamos entablado conversacion
+        String xpath = "/html/body/div[1]/div/table/tbody/tr[5]/td[6]/a";
+        SeleniumUtils.waitLoadElementsByXpath(driver,xpath,PO_View.getTimeout());
+        List<WebElement> webElements = driver.findElements(By.xpath(xpath));
+        webElements.get(0).click();
+
+        //Escribimos el mensaje
+        xpath = "/html/body/div[1]/div/h1";
+        SeleniumUtils.waitLoadElementsByXpath(driver,xpath,PO_View.getTimeout());
+        PO_FirstNewMessage.fillNewMessage(driver, "Nuevo mensaje");
+
+        //Comprobamos que en "Mis Conversaciones" haya 3 conversaciones en total
+        xpath = "/html/body/div[1]/div/table/tbody/tr";
+        SeleniumUtils.waitLoadElementsByXpath(driver,xpath,PO_View.getTimeout());
+        webElements = driver.findElements(By.xpath(xpath));
+        Assertions.assertEquals(3,webElements.size());
+    }
+
     /*
      + ###################
      * Pruebas de listado de ofertas en RestAPI
@@ -1084,32 +1386,7 @@ class Sdi2223Entrega2TestApplicationTests {
     /**
      * Inicio de sesión con datos válidos
      */
-    @Test
-    @Order(48)
-    void P48() {
-        //Vamos al formulario de logueo.
-        driver.navigate().to(URL+"/apiclient");
-        //Rellenamos el formulario
-        PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
-        //Comprobamos que entramos en la pagina privada del usuario
-        List<WebElement> result = PO_View.checkElementBy(driver, "text", "Ofertas disponibles");
-        Assertions.assertEquals("Ofertas disponibles", result.get(0).getText());
-    }
 
-    /**
-     * Inicio de sesión con datos inválidos (usuario estándar, email existente, pero contraseña
-     * incorrecta).
-     */
-    @Test
-    @Order(49)
-    void P49() throws InterruptedException {
-        //Vamos al formulario de logueo.
-        driver.navigate().to(URL+"/apiclient");
-        //Rellenamos el formulario
-        PO_LoginView.fillLoginForm(driver, "user01@email.com", "user02");
-        List<WebElement> result = PO_LoginView.checkElementBy(driver, "text", "Email o contraseña inválidos.");
-        Assertions.assertTrue(result.size() > 0);
-    }
 
     /**
      * Inicio de sesión con datos inválidos (campo email o contraseña vacíos)

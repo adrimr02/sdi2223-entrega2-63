@@ -34,6 +34,17 @@ module.exports = class {
         }
     }
 
+    async findTheConversation(filter, options = {}) {
+        try {
+            const client = await this.mongoClient.connect(this.app.get('mongouri'))
+            const database = client.db('mywallapop')
+            const conversationsCollection = database.collection(this.collectionName)
+            return await conversationsCollection.findOne(filter, options)
+        } catch (err) {
+            throw err
+        }
+    }
+
     async deleteConversation(id) {
         try {
             const client = await this.mongoClient.connect(this.app.get('mongouri'))
