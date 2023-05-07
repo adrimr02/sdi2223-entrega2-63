@@ -68,7 +68,7 @@ public class MongoDB {
 					.append("email", "user"+prefix+"@email.com")
 					.append("birthday", LocalDate.of(199810, 2, 19))
 					.append("password", BCrypt.hashpw("user"+prefix, BCrypt.gensalt()))
-					.append("wallet", 100).append("userType", "standard");
+					.append("wallet", i==7 ? 10 : 100).append("userType", "standard");
 			users.insertOne(user);
 		}
 	}
@@ -91,6 +91,7 @@ public class MongoDB {
 				.append("price", 350)
 				.append("date", LocalDate.now())
 				.append("seller", "user01@email.com")
+				.append("buyer", "user09@email.com")
 				.append("available", false)
 				.append("featured", false);
 		offers.insertOne(offer2);
@@ -131,6 +132,7 @@ public class MongoDB {
 				.append("price", 800)
 				.append("date", LocalDate.now())
 				.append("seller", "user05@email.com")
+				.append("buyer", "user10@email.com")
 				.append("available", false)
 				.append("featured", false);
 		offers.insertOne(offer6);
@@ -171,6 +173,7 @@ public class MongoDB {
 				.append("price", 600)
 				.append("date", LocalDate.now())
 				.append("seller", "user02@email.com")
+				.append("buyer", "user08@email.com")
 				.append("available", false)
 				.append("featured", false);
 		offers.insertOne(offer10);
@@ -181,6 +184,7 @@ public class MongoDB {
 				.append("price", 150)
 				.append("date", LocalDate.now())
 				.append("seller", "user02@email.com")
+				.append("buyer", "user04@email.com")
 				.append("available", false)
 				.append("featured", false);
 		offers.insertOne(offer11);
@@ -241,6 +245,7 @@ public class MongoDB {
 				.append("price", 250)
 				.append("date", LocalDate.now())
 				.append("seller", "user03@email.com")
+				.append("buyer", "user01@email.com")
 				.append("available", false)
 				.append("featured", false);
 		offers.insertOne(offer17);

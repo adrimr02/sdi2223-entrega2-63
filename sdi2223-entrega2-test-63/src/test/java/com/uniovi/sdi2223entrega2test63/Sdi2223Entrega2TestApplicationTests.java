@@ -717,11 +717,135 @@ class Sdi2223Entrega2TestApplicationTests {
     }
 
     /*
+     * ###################
+     * Pruebas de listado de ofertas compradas
+     * ###################
+     */
+     
+     /**
+     * Ir a la opción de ofertas compradas del usuario y mostrar la lista. Comprobar que aparecen
+     * las ofertas que deben aparecer.
+     */
+    @Test
+    @Order( 29 )
+    void P29() {
+        // Nos logueamos con un usuario que ha comprado una oferta, en este
+        // caso, una television vendida por user02@email.com
+        PO_UserPrivateView.loginToPrivateView( driver, "user09@email.com",
+                "user09" );
+
+        // Vamos a la lista de ofertas compradas
+        PO_UserPrivateView.navigateToBoughtOffers(driver);
+
+        // Comprobamos que la oferta de la televisión esta en la lista
+        List<WebElement> elements = PO_UserPrivateView.checkElementBy( driver,
+                "free", "//*[text()='Mesa']");
+        Assertions.assertTrue( elements.size() >= 1 );
+    }
+
+    /*
+     * ###################
+     * Pruebas de destacar ofertas
+     * ###################
+     */
+
+    /**
+     * Al crear una oferta, marcar dicha oferta como destacada y a continuación comprobar: i)
+     * que aparece en el listado de ofertas destacadas para los usuarios y que el saldo del usuario se
+     * actualiza adecuadamente en la vista del ofertante (comprobar saldo antes y después, que deberá
+     * diferir en 20€).
+     */
+    @Test
+    @Order( 30 )
+    void P30() {
+        // Nos logueamos con un usuario que tenga mas de 20€ en su cartera
+        PO_UserPrivateView.loginToPrivateView( driver, "user04@email.com",
+                "user04" );
+        // Vamos a la pagina de crear oferta
+        PO_UserPrivateView.navigateToNewOfferForm(driver);
+        String offerName = "Nueva oferta 1";
+        double initialMoney = PO_UserPrivateView.getCurrentUserWallet(driver);
+        PO_UserPrivateView.fillFormAddOffer(driver, offerName, "40", "esa oferta aparecera en la pestaña de destacados", true);
+        PO_UserPrivateView.navigateToMyOffers(driver);
+
+        // Comprobamos que la oferta aparece como destacada en la lista de ofertas del usuario
+        WebElement offer = PO_View.checkElementBy(driver, "free",
+                "//table/tbody/tr[td[contains(text(), '"+offerName+"')]]").get(0);
+        List<WebElement> featured = offer.findElements(By.xpath("//*[contains(text(), 'Oferta destacada')]"));
+        Assertions.assertEquals(1, featured.size());
+        // Comprobamos que se han restado los 20 € de la cartera del usuario
+        Assertions.assertEquals(initialMoney - 20, PO_UserPrivateView.getCurrentUserWallet(driver));
+
+        // Comprobamos que la oferta aparece en la seccion de destacadas
+        PO_UserPrivateView.navigateToSearchOffers(driver);
+        List<WebElement> result = PO_UserPrivateView.checkElementBy(driver, "free",
+                "//*[@id=\"featured\"]/tbody/tr[td[contains(text(), '"+offerName+"')]]" );
+        Assertions.assertEquals(1, result.size());
+    }
+
+    /**
+     *  Sobre el listado de ofertas de un usuario con más de 20 euros de saldo, pinchar en el enlace
+     * Destacada y a continuación comprobar: i) que aparece en el listado de ofertas destacadas para los
+     * usuarios y que el saldo del usuario se actualiza adecuadamente en la vista del ofertante (comprobar
+     * saldo antes y después, que deberá diferir en 20€ ).
+     */
+    @Test
+    @Order( 31 )
+    void P31() {
+        // Nos logueamos con un usuario que tenga mas de 20€ en su cartera
+        PO_UserPrivateView.loginToPrivateView( driver, "user04@email.com",
+                "user04" );
+
+        // Escogemos una oferta no destacada de la lista de ofertas del usuario y pulsamos en destacar
+        double initialMoney = PO_UserPrivateView.getCurrentUserWallet(driver);
+        WebElement offer = PO_View.checkElementBy(driver, "free",
+                "//table/tbody/tr[td[a[contains(text(), 'Destacar')]]]").get(0);
+        String offerName = offer.findElement(By.xpath("td")).getText();
+        WebElement featureBtn = offer.findElement(By.xpath("//*[contains(text(), 'Destacar')]"));
+        featureBtn.click();
+
+        // Comprobamos que se han restado los 20 € de la cartera del usuario
+        Assertions.assertEquals(initialMoney - 20, PO_UserPrivateView.getCurrentUserWallet(driver));
+
+        // Comprobamos que la oferta aparece en la seccion de destacadas
+        PO_UserPrivateView.navigateToSearchOffers(driver);
+        List<WebElement> result = PO_UserPrivateView.checkElementBy(driver, "free",
+                "//*[@id=\"featured\"]/tbody/tr[td[contains(text(), '"+offerName+"')]]" );
+        Assertions.assertEquals(1, result.size());
+    }
+
+    /**
+     * Sobre el listado de ofertas de un usuario con menos de 20 euros de saldo, pinchar en el
+     * enlace Destacada y a continuación comprobar que se muestra el mensaje de saldo no suficiente
+     */
+    @Test
+    @Order( 32 )
+    void P32() {
+        // Nos logueamos con un usuario que tenga mas de 20€ en su cartera
+        PO_UserPrivateView.loginToPrivateView( driver, "user07@email.com",
+                "user07" );
+
+        // Escogemos una oferta no destacada de la lista de ofertas del usuario y pulsamos en destacar
+        double initialMoney = PO_UserPrivateView.getCurrentUserWallet(driver);
+        WebElement offer = PO_View.checkElementBy(driver, "free",
+                "//table/tbody/tr[td[a[contains(text(), 'Destacar')]]]").get(0);
+        String offerName = offer.findElement(By.xpath("td")).getText();
+        WebElement featureBtn = offer.findElement(By.xpath("//*[contains(text(), 'Destacar')]"));
+        featureBtn.click();
+
+        // Comprobamos que no se ha restado dinero de la cartera del usuario
+        Assertions.assertEquals(initialMoney, PO_UserPrivateView.getCurrentUserWallet(driver));
+
+        // Comprobamos que aparece el error
+        SeleniumUtils.textIsPresentOnPage(driver, "No tienes suficiente dinero.");
+    }
+    
+    /*
      + ###################
      * Pruebas de seguridad y auditoría
      * ###################
      */
-
+    
     /**
      *  Intentar acceder sin estar autenticado a la opción de listado de usuarios. Se deberá volver
      * al formulario de login.
@@ -844,7 +968,7 @@ class Sdi2223Entrega2TestApplicationTests {
     */
 
     /*
-     + ###################
+     * ###################
      * Pruebas de login RestAPI
      * ###################
      */
@@ -952,6 +1076,57 @@ class Sdi2223Entrega2TestApplicationTests {
         ResponseBody body = response.getBody();
     }*/
 
+     /*
+     * ###################
+     * Pruebas de login cliente JQuery
+     * ###################
+     */
+
+    /**
+     * Inicio de sesión con datos válidos
+     */
+    @Test
+    @Order(48)
+    void P48() {
+        //Vamos al formulario de logueo.
+        driver.navigate().to(URL+"/apiclient");
+        //Rellenamos el formulario
+        PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
+        //Comprobamos que entramos en la pagina privada del usuario
+        List<WebElement> result = PO_View.checkElementBy(driver, "text", "Ofertas disponibles");
+        Assertions.assertEquals("Ofertas disponibles", result.get(0).getText());
+    }
+
+    /**
+     * Inicio de sesión con datos inválidos (usuario estándar, email existente, pero contraseña
+     * incorrecta).
+     */
+    @Test
+    @Order(49)
+    void P49() throws InterruptedException {
+        //Vamos al formulario de logueo.
+        driver.navigate().to(URL+"/apiclient");
+        //Rellenamos el formulario
+        PO_LoginView.fillLoginForm(driver, "user01@email.com", "user02");
+        List<WebElement> result = PO_LoginView.checkElementBy(driver, "text", "Email o contraseña inválidos.");
+        Assertions.assertTrue(result.size() > 0);
+    }
+
+    /**
+     * Inicio de sesión con datos inválidos (campo email o contraseña vacíos)
+     */
+    @Test
+    @Order(50)
+    void P50() {
+        //Vamos al formulario de logueo.
+        driver.navigate().to(URL+"/apiclient");
+        //Pulsamos el botón para enviar el formulario sin haberlo rellenado
+        By boton = By.className("btn");
+        driver.findElement(boton).click();
+        List<WebElement> result = PO_LoginView.checkElementBy(driver, "text", "Email o contraseña inválidos.");
+        Assertions.assertTrue(result.size() > 0);
+    }
+    
     /*
      + ###################
      * Pruebas de listado de ofertas en cliente JQuery

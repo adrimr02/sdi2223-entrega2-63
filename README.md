@@ -22,9 +22,9 @@
   * Comprar oferta ✓
     * Pruebas ✓
   * Listar ofertas compradas ✓
-    * Pruebas x
+    * Pruebas ✓
   * Marcar oferta como destacada ✓
-    * Pruebas x
+    * Pruebas ✓
   * Seguridad y auditoria x
     * Pruebas x
 * ### RestApi:
@@ -44,7 +44,7 @@
     * Pruebas x
 * ### App JQuery:
   * Autenticación del usuario ✓
-    * Pruebas x
+    * Pruebas ✓
   * Listar ofertas disponibles x
     * Pruebas x
   * Establecer conversacion en una oferta x
