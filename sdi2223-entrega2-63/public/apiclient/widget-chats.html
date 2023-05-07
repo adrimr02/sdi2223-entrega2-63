@@ -25,15 +25,11 @@
             dataType:'json',
             headers: {"token": token},
             success: function(response){
-                if (Cookies.get('token') != null ) {
-                    conversations = response.conversations;
-                    updateConversations(conversations);
-                }else{
-                    $( "#main-container" ).load("widget-login.html");
-                }
+                conversations = response.conversations;
+                updateConversations(conversations);
             },
             error: function (error) {
-                $("#main-container").load("widget-chats.html");
+                $( "#main-container" ).load("widget-login.html");
             }
         });
     }
