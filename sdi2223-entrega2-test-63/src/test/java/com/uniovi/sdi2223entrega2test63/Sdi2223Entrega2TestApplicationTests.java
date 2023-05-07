@@ -22,8 +22,8 @@ class Sdi2223Entrega2TestApplicationTests {
     static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
 
     //static String Geckodriver= "C:\\Users\\Daniel Alonso\\Desktop\\PL-SDI-Sesión5-material\\geckodriver-v0.30.0-win64.exe";
-    static String Geckodriver = "E:\\ADRIAN\\Uniovi\\Curso 3\\SDI\\drivers\\geckodriver.exe";
-    //static String Geckodriver = "C:\\Users\\larry\\Desktop\\UNI\\SDI\\PL-SDI-Sesio╠ün5-material\\geckodriver-v0.30.0-win64.exe";
+    //static String Geckodriver = "E:\\ADRIAN\\Uniovi\\Curso 3\\SDI\\drivers\\geckodriver.exe";
+    static String Geckodriver = "C:\\Users\\larry\\Desktop\\UNI\\SDI\\PL-SDI-Sesio╠ün5-material\\geckodriver-v0.30.0-win64.exe";
 
     //static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
     //static String PathFirefox = "/Applications/Firefox.app/Contents/MacOS/firefox-bin";
@@ -234,6 +234,113 @@ class Sdi2223Entrega2TestApplicationTests {
         // Comprueba que no existe el dropdown con la informacion del usuario,
         // incluyendo el boton de logout
         SeleniumUtils.textIsNotPresentOnPage( driver, "Cerrar sesión");
+    }
+
+    /*
+     + ###################
+     * Pruebas de listado de usuarios
+     * ###################
+     */
+
+    /**
+     * Mostrar el listado de usuarios. Comprobar que se muestran todos los que existen en el
+     * sistema, contabilizando al menos el número de usuarios.
+     */
+    @Test
+    @Order( 11 )
+    void P11() {
+        // Nos logueamos
+        PO_UserPrivateView.loginToPrivateView( driver, "admin@email.com", "admin" );
+        //Contamos el número de filas
+        List<WebElement> usersList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout());
+        //int expectedUsers=17;
+        int expectedUsers=16;
+        int users = usersList.size();
+
+        for(int i=2; i<=4; i++){
+            PO_AdminPrivateView.navigateToUsersPage(driver, i);
+            usersList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                    PO_View.getTimeout());
+            users+= usersList.size();
+        }
+        Assertions.assertEquals(expectedUsers, users);
+    }
+
+    /*
+     + ###################
+     * Pruebas de borrado de usuarios
+     * ###################
+     */
+
+    /**
+     *  Ir a la lista de usuarios, borrar el primer usuario de la lista, comprobar que la lista se actualiza
+     * y dicho usuario desaparece.
+     */
+    @Test
+    @Order( 12 )
+    void P12() {
+        // Nos logueamos
+        PO_UserPrivateView.loginToPrivateView( driver, "admin@email.com", "admin" );
+        // Capturamos el checkbox y lo seleccionamos
+        WebElement checkbox = driver.findElement(By.xpath("(//input[@type='checkbox'])[1]"));
+        checkbox.click();
+        // Pulsamos el botón de eliminar
+        By save = By.cssSelector("button[type=submit]");
+        driver.findElement(save).click();
+
+        SeleniumUtils.textIsNotPresentOnPage(driver,"user01@email,com");
+        //SeleniumUtils.textIsNotPresentOnPage(driver,"newuser1@email,com");
+    }
+
+    /**
+     *  Ir a la lista de usuarios, borrar el último usuario de la lista, comprobar que la lista se actualiza
+     * y dicho usuario desaparece.
+     */
+    @Test
+    @Order( 13 )
+    void P13() {
+        // Nos logueamos
+        PO_UserPrivateView.loginToPrivateView( driver, "admin@email.com", "admin" );
+        //Navegamos a la ultima pagina
+        PO_AdminPrivateView.navigateToUsersPage(driver, 4);
+        // Capturamos los checkbox y seleccionamos el ultimo
+        List<WebElement> checkboxes = driver.findElements(By.xpath("//input[@type='checkbox']"));
+        WebElement lastCheckbox = checkboxes.get(checkboxes.size() - 1);
+        lastCheckbox.click();
+        // Pulsamos el botón de eliminar
+        By save = By.cssSelector("button[type=submit]");
+        driver.findElement(save).click();
+
+        SeleniumUtils.textIsNotPresentOnPage(driver,"user15@email,com");
+        //SeleniumUtils.textIsNotPresentOnPage(driver,"newuser1@email,com");
+    }
+
+    /**
+     *  Ir a la lista de usuarios, borrar 3 usuarios, comprobar que la lista se actualiza y dichos
+     * usuarios desaparecen.
+     */
+    @Test
+    @Order( 14 )
+    void P14() {
+        // Nos logueamos
+        PO_UserPrivateView.loginToPrivateView( driver, "admin@email.com", "admin" );
+        // Capturamos los checkbox y los seleccionamos
+        List<WebElement> checkboxes = driver.findElements(By.xpath("//input[@type='checkbox']"));
+        for (WebElement checkbox : checkboxes) {
+            if (checkbox.getAttribute("value").equals("user02@email.com") ||
+                    checkbox.getAttribute("value").equals("user03@email.com") ||
+                        checkbox.getAttribute("value").equals("user04@email.com")) {
+                checkbox.click();
+            }
+        }
+        // Pulsamos el botón de eliminar
+        By save = By.cssSelector("button[type=submit]");
+        driver.findElement(save).click();
+
+        SeleniumUtils.textIsNotPresentOnPage(driver,"user02@email,com");
+        SeleniumUtils.textIsNotPresentOnPage(driver,"user03@email,com");
+        SeleniumUtils.textIsNotPresentOnPage(driver,"user04@email,com");
     }
 
     /*
@@ -609,6 +716,121 @@ class Sdi2223Entrega2TestApplicationTests {
         SeleniumUtils.textIsPresentOnPage(driver, "No tienes suficiente dinero.");
     }
 
+    /*
+     + ###################
+     * Pruebas de seguridad y auditoría
+     * ###################
+     */
+
+    /**
+     *  Intentar acceder sin estar autenticado a la opción de listado de usuarios. Se deberá volver
+     * al formulario de login.
+     */
+    @Test
+    @Order( 33 )
+    void P33() {
+        driver.get("http://localhost:8080/users");
+        SeleniumUtils.textIsPresentOnPage(driver,"Iniciar Sesión");
+    }
+
+    /**
+     *  Intentar acceder sin estar autenticado a la opción de listado de usuarios. Se deberá volver
+     * al formulario de login.
+     */
+    @Test
+    @Order( 34 )
+    void P34() {
+        driver.get("http://localhost:8080/api/conversations");
+        SeleniumUtils.textIsPresentOnPage(driver,"\"authorized\":false");
+    }
+
+    /**
+     *   Estando autenticado como usuario estándar intentar acceder a una opción disponible solo
+     * para usuarios administradores. Se deberá indicar un
+     * mensaje de acción prohibida
+     */
+    @Test
+    @Order( 35 )
+    void P35() {
+        //Vamos al formulario de logueo.
+        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        //Rellenamos el formulario
+        PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
+        //Intentamos navegar a la sección de logs
+        driver.get("http://localhost:8080/logs");
+        //Comprobamos que se muestra el mensaje de sección prohibida
+        List<WebElement> result = PO_SignUpView.checkElementBy(driver, "text", "No tiene permitido" );
+        Assertions.assertEquals(1, result.size());
+
+    }
+
+    /**
+     *  Estando autenticado como usuario administrador visualizar todos los logs generados en
+     * una serie de interacciones. Esta prueba deberá generar al menos dos interacciones de cada tipo y
+     * comprobar que el listado incluye los logs correspondientes.
+     */
+    @Test
+    @Order( 36 )
+    void P36() {
+        //Vamos al formulario de registro
+        PO_HomeView.clickOption(driver, "signup", "class", "btn btn-primary");
+        //Rellenamos el formulario
+        PO_SignUpView.fillForm(driver, "user20", "20", "user20@email.com",
+                "10/12/2002", "user20", "user20");
+        //Hacemos logout
+        PO_UserPrivateView.logout(driver);
+        //Vamos al formulario de registro
+        PO_HomeView.clickOption(driver, "signup", "class", "btn btn-primary");
+        //Rellenamos el formulario
+        PO_SignUpView.fillForm(driver, "user21", "21", "user21@email.com",
+                "10/12/2002", "user21", "user21");
+        //Hacemos logout
+        PO_UserPrivateView.logout(driver);
+        //Rellenamos el formulario de logeo de forma incorrecta dos veces
+        PO_LoginView.fillLoginForm(driver, "user01@email.com", "user02");
+        PO_LoginView.fillLoginForm(driver, "user02@email.com", "user01");
+        //Rellenamos el formulario de logeo de forma correcta
+        PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
+        //Hacemos logout
+        PO_UserPrivateView.logout(driver);
+        // Nos logueamos como administrador
+        PO_UserPrivateView.loginToPrivateView( driver, "admin@email.com", "admin" );
+        //Navegamos a la pagina de logs
+        PO_AdminPrivateView.navigateToLogs(driver);
+        List<WebElement> logsList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout());
+        int expectedLogs=30;
+        int logs=logsList.size();
+        for(int i=2; i<=3; i++){
+            PO_AdminPrivateView.navigateToLogsPage(driver, i);
+            logsList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                    PO_View.getTimeout());
+            logs+= logsList.size();
+        }
+        Assertions.assertEquals(expectedLogs, logs);
+    }
+
+    /**
+     *   Estando autenticado como usuario administrador, ir a visualización de logs, pulsar el
+     * botón/enlace borrar logs y comprobar que se eliminan los logs de la base de datos.
+     */
+    @Test
+    @Order( 37 )
+    void P37() {
+        // Nos logueamos
+        PO_UserPrivateView.loginToPrivateView( driver, "admin@email.com", "admin" );
+        //Navegamos a la pagina de logs
+        PO_AdminPrivateView.navigateToLogs(driver);
+        // Pulsamos el botón de eliminar
+        By save = By.cssSelector("button[type=submit]");
+        driver.findElement(save).click();
+
+        List<WebElement> logsList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
+                PO_View.getTimeout());
+
+        Assertions.assertEquals(1, logsList.size());
+    }
+
     /* Ejemplos de pruebas de llamada a una API-REST */
     /* ---- Probamos a obtener lista de canciones sin token ---- */
     /*
@@ -692,4 +914,63 @@ class Sdi2223Entrega2TestApplicationTests {
         ResponseBody body = response.getBody();
         Assertions.assertTrue(body.asString().contains("Falta email o contraseña"));
     }
+
+    /*
+     + ###################
+     * Pruebas de listado de ofertas en RestAPI
+     * ###################
+     */
+
+    /**
+     *  Mostrar el listado de ofertas para dicho usuario y comprobar que se muestran todas las que
+     * existen para este usuario.
+     */
+    /*@Test
+    @Order( 41 )
+    public void P41() {
+        final String RestAssuredURL = URL + "/api/users/login";
+        //2. Preparamos el parámetro en formato JSON
+        RequestSpecification request = RestAssured.given();
+        JSONObject requestParams = new JSONObject();
+        requestParams.put("email", "user01@email.com");
+        requestParams.put("password", "user01");
+        request.header("Content-Type", "application/json");
+        request.body(requestParams.toJSONString());
+        //3. Hacemos la petición
+        Response response = request.post(RestAssuredURL);
+        //4. Comprobamos que el servicio ha tenido exito
+        Assertions.assertEquals(200, response.getStatusCode());
+        ResponseBody body = response.getBody();
+        //5. Accedemos a la url del listado de ofertas
+        final Sting RestAssuredURL2 = URL + "/api/offers";
+        requestParams = new JSONObject();
+        requestParams.put("token", body.token);
+        request.body(requestParams.toJSONString());
+        Response response = request.post(RestAssuredURL2);
+        //6. Comprobamos que el servicio ha tenido exito
+        Assertions.assertEquals(200, response.getStatusCode());
+        ResponseBody body = response.getBody();
+    }*/
+
+    /*
+     + ###################
+     * Pruebas de listado de ofertas en cliente JQuery
+     * ###################
+     */
+
+    /**
+     *  Mostrar el listado de ofertas disponibles y comprobar que se muestran todas las que existen,
+     * menos las del usuario identificado
+     */
+    /*@Test
+    @Order( 51 )
+    public void P51() {
+        //Accedemos al cliente JQ
+        PO_UserPrivateView.navigateToJQLogin( driver)
+        // Nos logueamos
+        PO_UserPrivateView.loginToJQPrivateView( driver, "user01@email.com", "user01" );
+
+
+    }*/
+
 }

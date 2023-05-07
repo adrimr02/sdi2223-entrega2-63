@@ -78,5 +78,21 @@ public class PO_UserPrivateView extends PO_NavView {
         return Double.parseDouble(numString);
     }
 
+    public static void navigateToJQLogin(WebDriver driver) {
+        PO_View.checkElementBy(driver, "@href", "apiclient/index.html").get(0).click();
+        List<WebElement> result = PO_View.checkElementBy(driver, "free", "//h2[text()=\"Email\"]");
+        Assertions.assertEquals(1, result.size());
+    }
+
+    static public void loginToJQPrivateView(WebDriver driver, String email,
+                                          String password) {
+        // Vamos al formulario de logueo
+        PO_HomeView.clickOption(driver, "login", "class",
+                "btn btn-primary");
+        //Rellenamos el formulario
+        PO_LoginView.fillLoginForm(driver, email, password);
+
+        PO_View.checkElementBy(driver, "text", "Ofertas");
+    }
 
 }
