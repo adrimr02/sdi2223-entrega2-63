@@ -20,6 +20,7 @@ const userSessionRouter = require('./routes/userSessionRouter')
 const adminSessionRouter = require('./routes/adminSessionRouter')
 const userNoSessionRouter = require('./routes/userNoSessionRouter')
 const userTokenRouter = require('./routes/api/userTokenRouter')
+const loggerW = require("./util/logger");
 
 const app = express()
 
@@ -110,12 +111,14 @@ function startup() {
   });
 
   function logMiddleware(req, res, next) {
-    loggerW.info({
-      type: "PET",
-      method: req.method,
-      url: req.originalUrl,
-      params: req.params
-    });
+    if(!req.originalUrl.includes('.')){
+      loggerW.info({
+        type: "PET",
+        method: req.method,
+        url: req.originalUrl,
+        params: req.params
+      });
+    }
     next();
   }
 }
