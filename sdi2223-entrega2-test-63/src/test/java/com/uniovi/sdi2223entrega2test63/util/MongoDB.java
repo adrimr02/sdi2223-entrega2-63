@@ -282,6 +282,31 @@ public class MongoDB {
 	}
 
 	private void insertarConversaciones() {
+		MongoCollection<Document> conversations = getMongodb().getCollection("conversations");
+		Document conver0 = new Document()
+				.append("buyer", "user01@email.com")
+				.append("offer", "0")
+				.append("seller", "user02@email.com")
+				.append("offerTitle", "Silla")
+				.append("date", new Date());
+
+		Document conver1 = new Document()
+				.append("buyer", "user03@email.com")
+				.append("offer", "1")
+				.append("seller", "user01@email.com")
+				.append("offerTitle", "Mesa")
+				.append("date", new Date());
+
+		Document conver2 = new Document()
+				.append("buyer", "user03@email.com")
+				.append("offer", "2")
+				.append("seller", "user02@email.com")
+				.append("offerTitle", "Sofa")
+				.append("date", new Date());
+
+		conversations.insertOne(conver0);
+		conversations.insertOne(conver1);
+		conversations.insertOne(conver2);
 
 	}
 

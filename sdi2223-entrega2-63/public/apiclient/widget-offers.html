@@ -45,7 +45,8 @@
                 "<td>" + offers[i].price + "€" + "</td>" +
                 "<td>" + offers[i].seller + "</td>" +
                 "<td>" +
-                "<a onclick=offerMessage('" + offers[i]._id+ "'" +",'" + offers[i].title+"'" + ")>Escribir Mensaje</a><br>" +
+                "<a onclick=offerMessage('" + offers[i]._id+ "'" +",'" + offers[i].title+"','" + offers[i].seller+"'"+")>" +
+                "Escribir Mensaje</a><br>" +
                 "</td>" +
                 "</tr>");
         }
@@ -54,10 +55,12 @@
     var converID;
     var offerID;
     var offerTitle;
-    function offerMessage(id,title){
+    var offerSeller;
+    function offerMessage(id,title, seller){
         console.log(id)
         offerID=id;
         offerTitle=title;
+        offerSeller= seller;
         $.ajax({
             url:URLbase+"/new/conversation",
             type:"POST",

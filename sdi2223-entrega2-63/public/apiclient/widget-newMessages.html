@@ -25,6 +25,7 @@
       data: {
         offer: offerID,
         offerTitle: offerTitle,
+        offerSeller: offerSeller,
         content: $('#newMsgNoConv').val()
       },
       dataType: 'json',
@@ -35,7 +36,7 @@
 
       },
       error: function (error) {
-        $("#main-container").load("widget-offers.html");
+        $('#widget-newMessages').prepend('<div class="alert alert-danger">No se pueden enviar mensajes vacios</div>')
       }
     });
   })

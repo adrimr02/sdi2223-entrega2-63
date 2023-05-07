@@ -66,27 +66,38 @@ module.exports = function (app, conversationRepository, messageRepository) {
     })
 
     app.post('/api/new/conversation/message', function (req, res) {
-        console.log("Este es el mensaje que creeara la nueva conver: " +req.user)
+        console.log("Este es el mensaje que creeara la nueva conver: " +req.body.content.toString())
+        if (req.body.content.toString().trim() === '') {
+            res.status(400).json({ success: false, error: { message: 'Mensaje en blanco' } })
+            return
+        }
+
+        if(req.user === req.body.offerSeller){
+            res.status(400).json({ success: false, error: { message: 'Mensaje a su propia oferta' } })
+            return
+        }
+
 
         //Primero creamos la conversacion en la que meteremos el mensaje
         conversationRepository.insertConversation( {
             buyer: req.user,
             offer: new ObjectId(req.body.offer),
+            seller: req.body.offerSeller,
             offerTitle: req.body.offerTitle,
             date: new Date()
         }).then(newConverId => {
+
             //Ahora insertamos el mensaje con la id de la nueva conversacion
-            console.log("Esto deberia de ser el id de la conver recien creada: "+ newConverId)
-            messageRepository.insertMessage({
-                    conversation:new ObjectId(newConverId),
-                    content: req.body.content,
-                    writer: req.user,
-                    date: new Date(),
-                    read: false
-                }
-            ).then(messages => {
+           let newMessage = {
+                conversation:new ObjectId(newConverId),
+                content: req.body.content,
+                writer: req.user,
+                date: new Date(),
+                read: false
+            }
+            messageRepository.insertMessage(newMessage).then(messages => {
                 res.status(200);
-                res.send({messages: messages})
+                res.send({messages: newMessage})
             }).catch(error => {
                 res.status(500);
                 res.json({ error: "Se ha producido un error al insertar un nuevo mensaje." })
