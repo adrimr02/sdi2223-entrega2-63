@@ -20,7 +20,6 @@ const userSessionRouter = require('./routes/userSessionRouter')
 const adminSessionRouter = require('./routes/adminSessionRouter')
 const userNoSessionRouter = require('./routes/userNoSessionRouter')
 const userTokenRouter = require('./routes/api/userTokenRouter')
-const loggerW = require("./util/logger");
 
 // #############################
 // #############################
@@ -46,12 +45,11 @@ const messageRepository = new MessageRepository(app,MongoClient)
 
 if (RESET_DB) {
   require('./util/dbInit')(app, MongoClient, usersRepository, offersRepository, logsRepository, conversationRepository,messageRepository)
-    .then(startup)
+    .then(() => startup())
     .catch(err => console.error(err))
 } else {
   startup()
 }
-
 
 function startup() {
   const loggerW = require("./util/logger")
