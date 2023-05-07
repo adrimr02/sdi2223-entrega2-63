@@ -54,8 +54,6 @@ class Sdi2223Entrega2TestApplicationTests {
     //Antes de la primera prueba
     @BeforeAll
     static public void begin() {
-        // MongoDB m = new MongoDB();
-        // m.resetMongo();
     }
 
     //Al finalizar la última prueba

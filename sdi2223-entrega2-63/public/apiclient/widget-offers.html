@@ -36,14 +36,14 @@
     }
     function updateOffersTable(offers) {
         $("#offersTableBody").empty(); // Vaciar la tabla
-        for (i = 0; i < offers.length; i++) {
+        for (let offer of offers) {
             $("#offersTableBody").append(
-                "<tr id=" + offers[i]._id + ">" +
-                "<td>" + offers[i].title + "</td>" +
-                "<td>" + offers[i].description + "</td>" +
-                "<td>" + offers[i].date + "</td>" +
-                "<td>" + offers[i].price + "€" + "</td>" +
-                "<td>" + offers[i].seller + "</td>" +
+                "<tr id=" + offer._id + ">" +
+                "<td>" + offer.title + "</td>" +
+                "<td>" + offer.description + "</td>" +
+                "<td>" + offer.date + "</td>" +
+                "<td>" + offer.price + "€" + "</td>" +
+                "<td>" + offer.seller + "</td>" +
                 "</td>" +
                 "</tr>");
         }

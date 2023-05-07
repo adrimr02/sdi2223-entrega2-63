@@ -22,6 +22,13 @@ const userNoSessionRouter = require('./routes/userNoSessionRouter')
 const userTokenRouter = require('./routes/api/userTokenRouter')
 const loggerW = require("./util/logger");
 
+// #############################
+// #############################
+// Cambiar a false para que la DB no se reinicie al arrancar
+const RESET_DB = true
+// #############################
+// #############################
+
 const app = express()
 
 //Setting global variables
@@ -37,9 +44,14 @@ const logsRepository = new LogsRepository(app, MongoClient)
 const conversationRepository = new ConversationsRepository(app, MongoClient)
 const messageRepository = new MessageRepository(app,MongoClient)
 
-require('./util/dbInit')(app, MongoClient, usersRepository, offersRepository, logsRepository, conversationRepository,messageRepository)
-  .then(startup)
-  .catch(err => console.error(err))
+if (RESET_DB) {
+  require('./util/dbInit')(app, MongoClient, usersRepository, offersRepository, logsRepository, conversationRepository,messageRepository)
+    .then(startup)
+    .catch(err => console.error(err))
+} else {
+  startup()
+}
+
 
 function startup() {
   const loggerW = require("./util/logger")
