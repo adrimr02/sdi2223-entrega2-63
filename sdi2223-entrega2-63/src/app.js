@@ -16,6 +16,7 @@ const LogsRepository = require('./repositories/logsRepository')
 const ConversationsRepository = require('./repositories/conversationsRepository')
 const MessageRepository = require('./repositories/messageRepository')
 
+const sessionRouter = require('./routes/sessionRouter')
 const userSessionRouter = require('./routes/userSessionRouter')
 const adminSessionRouter = require('./routes/adminSessionRouter')
 const userNoSessionRouter = require('./routes/userNoSessionRouter')
@@ -74,8 +75,7 @@ function startup() {
   //Protect Routes here
   app.use('/signup', userNoSessionRouter)
   app.use('/login', userNoSessionRouter)
-  app.use('/logout', userSessionRouter)
-  //app.use('/logout', adminSessionRouter)
+  app.use('/logout', sessionRouter)
   app.use('/offers/*', userSessionRouter)
   app.use('/shop', userSessionRouter)
   app.use('/users', adminSessionRouter)
@@ -84,8 +84,6 @@ function startup() {
   app.use('/api/new',userTokenRouter)
   app.use('/api/conversations/*',userTokenRouter)
   app.use('/api/conversations',userTokenRouter)
-
-
 
   // Set static files
   app.use(express.static(path.join(__dirname, '../public')))
