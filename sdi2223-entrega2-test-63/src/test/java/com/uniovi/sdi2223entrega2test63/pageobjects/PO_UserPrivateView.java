@@ -61,6 +61,12 @@ public class PO_UserPrivateView extends PO_NavView {
         Assertions.assertEquals(1, result.size());
     }
 
+    public static void navigateToBoughtOffers(WebDriver driver) {
+        PO_View.checkElementBy(driver, "@href", "offers/bought").get(0).click();
+        List<WebElement> result = PO_View.checkElementBy(driver, "free", "//h2[text()=\"Ofertas Compradas\"]");
+        Assertions.assertEquals(1, result.size());
+    }
+
     public static void navigateToNewOfferForm(WebDriver driver) {
         navigateToMyOffers(driver);
         PO_HomeView.clickOption(driver, "offers/new", "text",
