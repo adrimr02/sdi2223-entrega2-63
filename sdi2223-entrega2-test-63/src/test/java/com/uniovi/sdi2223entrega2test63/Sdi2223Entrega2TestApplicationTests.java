@@ -25,8 +25,8 @@ Sdi2223Entrega2TestApplicationTests {
     static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
 
     //static String Geckodriver= "C:\\Users\\Daniel Alonso\\Desktop\\PL-SDI-Sesión5-material\\geckodriver-v0.30.0-win64.exe";
-    //static String Geckodriver = "E:\\ADRIAN\\Uniovi\\Curso 3\\SDI\\drivers\\geckodriver.exe";
-    static String Geckodriver = "C:\\Users\\larry\\Desktop\\UNI\\SDI\\PL-SDI-Sesio╠ün5-material\\geckodriver-v0.30.0-win64.exe";
+    static String Geckodriver = "E:\\ADRIAN\\Uniovi\\Curso 3\\SDI\\drivers\\geckodriver.exe";
+    //static String Geckodriver = "C:\\Users\\larry\\Desktop\\UNI\\SDI\\PL-SDI-Sesio╠ün5-material\\geckodriver-v0.30.0-win64.exe";
 
 
     //static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
@@ -1324,7 +1324,7 @@ Sdi2223Entrega2TestApplicationTests {
 
         //Eligimos una oferta con la que no hayamos entablado conversacion
         String xpath = "/html/body/div[1]/div/table/tbody/tr[5]/td[6]/a";
-        SeleniumUtils.waitLoadElementsByXpath(driver,xpath,PO_View.getTimeout());
+        PO_UserPrivateView.checkElementBy(driver, "free", xpath);
         List<WebElement> webElements = driver.findElements(By.xpath(xpath));
         webElements.get(0).click();
 

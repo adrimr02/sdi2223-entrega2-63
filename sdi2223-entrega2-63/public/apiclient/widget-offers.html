@@ -38,14 +38,14 @@
         $("#offersTableBody").empty(); // Vaciar la tabla
         for (let offer of offers) {
             $("#offersTableBody").append(
-                "<tr id=" + offers[i]._id + ">" +
-                "<td>" + offers[i].title + "</td>" +
-                "<td>" + offers[i].description + "</td>" +
-                "<td>" + offers[i].date + "</td>" +
-                "<td>" + offers[i].price + "€" + "</td>" +
-                "<td>" + offers[i].seller + "</td>" +
+                "<tr id=" + offer._id + ">" +
+                "<td>" + offer.title + "</td>" +
+                "<td>" + offer.description + "</td>" +
+                "<td>" + offer.date + "</td>" +
+                "<td>" + offer.price + "€" + "</td>" +
+                "<td>" + offer.seller + "</td>" +
                 "<td>" +
-                "<a onclick=offerMessage('" + offers[i]._id+ "'" +",'" + offers[i].title+"','" + offers[i].seller+"'"+")>" +
+                "<a onclick=offerMessage('" + offer._id+ "'" +",'" + offer.title+"','" + offer.seller+"'"+")>" +
                 "Escribir Mensaje</a><br>" +
                 "</td>" +
                 "</tr>");
