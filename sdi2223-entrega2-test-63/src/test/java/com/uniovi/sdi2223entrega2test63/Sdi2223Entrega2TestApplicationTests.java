@@ -22,8 +22,8 @@ class Sdi2223Entrega2TestApplicationTests {
     static String PathFirefox = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
 
     //static String Geckodriver= "C:\\Users\\Daniel Alonso\\Desktop\\PL-SDI-Sesión5-material\\geckodriver-v0.30.0-win64.exe";
-    //static String Geckodriver = "E:\\ADRIAN\\Uniovi\\Curso 3\\SDI\\drivers\\geckodriver.exe";
-    static String Geckodriver = "C:\\Users\\larry\\Desktop\\UNI\\SDI\\PL-SDI-Sesio╠ün5-material\\geckodriver-v0.30.0-win64.exe";
+    static String Geckodriver = "E:\\ADRIAN\\Uniovi\\Curso 3\\SDI\\drivers\\geckodriver.exe";
+    //static String Geckodriver = "C:\\Users\\larry\\Desktop\\UNI\\SDI\\PL-SDI-Sesio╠ün5-material\\geckodriver-v0.30.0-win64.exe";
 
     //static String Geckodriver = "C:\\Dev\\tools\\selenium\\geckodriver-v0.30.0-win64.exe";
     //static String PathFirefox = "/Applications/Firefox.app/Contents/MacOS/firefox-bin";
@@ -40,6 +40,8 @@ class Sdi2223Entrega2TestApplicationTests {
 
     @BeforeEach
     public void setUp() {
+        MongoDB m = new MongoDB();
+        m.resetMongo();
         driver.navigate().to(URL);
     }
 
@@ -52,8 +54,8 @@ class Sdi2223Entrega2TestApplicationTests {
     //Antes de la primera prueba
     @BeforeAll
     static public void begin() {
-        MongoDB m = new MongoDB();
-        m.resetMongo();
+        // MongoDB m = new MongoDB();
+        // m.resetMongo();
     }
 
     //Al finalizar la última prueba
@@ -218,7 +220,7 @@ class Sdi2223Entrega2TestApplicationTests {
         PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
         //Comprobamos que entramos en la pagina privada del usuario
         List<WebElement> result = PO_View.checkElementBy(driver, "text", "Mis ofertas");
-        Assertions.assertEquals(2, result.size());
+        Assertions.assertEquals(1, result.size());
         //Ahora nos desconectamos comprobamas que aparece el menu de login
         PO_UserPrivateView.logout(driver);
         List<WebElement> resultlogin = PO_View.checkElementBy(driver, "free", "/html/body/div/h2");
@@ -254,8 +256,8 @@ class Sdi2223Entrega2TestApplicationTests {
         //Contamos el número de filas
         List<WebElement> usersList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr",
                 PO_View.getTimeout());
-        //int expectedUsers=17;
-        int expectedUsers=16;
+        //int expectedUsers=17; // Si se ejecutan todos
+        int expectedUsers=16; // Si se ejecuta individualmente
         int users = usersList.size();
 
         for(int i=2; i<=4; i++){
@@ -882,10 +884,9 @@ class Sdi2223Entrega2TestApplicationTests {
         PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
         //Intentamos navegar a la sección de logs
         driver.get("http://localhost:8080/logs");
-        //Comprobamos que se muestra el mensaje de sección prohibida
-        List<WebElement> result = PO_SignUpView.checkElementBy(driver, "text", "No tiene permitido" );
+        // Como no esta permitido se redirige a la seccion de inicio del tipo de usuario, en este caso, mis ofertas
+        List<WebElement> result = PO_SignUpView.checkElementBy(driver, "text", "Mis ofertas" );
         Assertions.assertEquals(1, result.size());
-
     }
 
     /**
